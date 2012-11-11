@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+
+<url>
+  <loc>http://nginxlibrary.com/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/about/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/xenforo-configuration/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/wordpress-permalinks/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/phpbb-configuration/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/converting-phpbbs-default-htaccess-for-nginx/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/403-forbidden-error/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/using-cloudflare-for-country-blocking/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/ip-based-country-blocking/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/nginx-1-0-11-has-been-released/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/nginx-1-0-10-has-been-released/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/nginx-1-0-9-has-been-released/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/nginx-1-0-8-has-been-released/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/nginx-1-0-7-has-been-released/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/nginx-1-0-6-has-been-released/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/page/2/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/archives/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/category/server-configuration/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/category/general-configuration/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/category/application-specific-configuration/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/category/new-releases/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/category/general/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/donate/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/enable-ipv6-support/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/enable-directory-listing/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/nginx-1-0-2-has-been-released/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/nginx-1-0-3-has-been-released/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/running-cgi-scripts-using-thttpd/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/nginx-1-0-1-version-has-been-released/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/hotlink-protection/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/hide-nginx-version/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/check-nginx-version/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/nginx-1-0-5-has-been-released/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/php-fastcgi/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/debian-latest-nginx/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/nginx-1-0-4-has-been-released/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/page/3/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/nginx-1-0-0-stable-has-been-released/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/ubuntu-latest-nginx/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/perl-fastcgi/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/denying-access-to-a-directory/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/nginx-0-8-53-stable-version-has-been-released/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/password-protect-a-directory/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/wwwno-www-rewrite-rules/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/resolving-no-input-file-specified-error/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/welcome-to-nginx-library/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+<url>
+  <loc>http://nginxlibrary.com/page/4/</loc>
+  <lastmod>2012-10-28T04:49:58+00:00</lastmod>
+</url>
+</urlset>
