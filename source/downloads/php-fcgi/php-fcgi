@@ -1,6 +1,6 @@
 #!/bin/bash
 ### BEGIN INIT INFO
-# Provides:          php-cgi
+# Provides:          php-fcgi
 # Required-Start:    networking
 # Required-Stop:     networking
 # Default-Start:     2 3 4 5
@@ -43,7 +43,7 @@ case "$1" in
       start
   ;;
     *)
-      echo "Usage: php-fastcgi {start|stop|restart}"
+      echo "Usage: php-fcgi {start|stop|restart}"
       exit 1
   ;;
 esac
