@@ -31,9 +31,9 @@ Nginx needs to have _read_ permissions for the file as well as _execute_ permiss
 
 ###Directory index is not properly defined
 
-Sometimes, the root directive does not contain the desired directory index. For example, for a standard setup with PHP, the root directive should be -
+Sometimes, the index directive does not contain the desired directory index. For example, for a standard setup with PHP, the index directive should be -
 
-	root index.html index.htm index.php;
+	index index.html index.htm index.php;
 
 According to this example, when a directory is acessed directly, Nginx will try to serve index.html, then index.htm and index.php after that. If none of them are found, Nginx will return a 403 header. If index.php were not defined in the root directive, Nginx would have returned 403 without checking for the existence of index.php.
 
