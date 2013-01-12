@@ -31,7 +31,14 @@ Nginx needs to have _read_ permissions for the file as well as _execute_ permiss
 
 To check for ownership and permissions on a path, we can use the `namei` utility like this -
 
-	namei -l /path/to/check
+	$ namei -l /var/www/vhosts/example.com
+	
+	f: /var/www/vhosts/example.com
+	drwxr-xr-x root     root     /
+	drwxr-xr-x root     root     var
+	drwxr-xr-x www-data www-data www
+	drwxr-xr-x www-data www-data vhosts
+	drwxr-xr-x clara    clara    example.com
 
 ###Directory index is not properly defined
 
