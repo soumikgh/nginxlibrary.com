@@ -27,7 +27,9 @@ This is the most common cause of this error. By permissions, I do not only mean 
 
 	/usr/share/myfiles/image.jpg
 
-Nginx needs to have _read_ permissions for the file as well as _execute_ permissions for `/`, `/usr`, `/usr/share` and `/usr/share/myfiles`. If you use the standard 755 for directories and 644 for files (umask: 022), you should not run into this problem.
+Nginx needs to have _read_ permissions for the file as well as _execute_ permissions for `/`, `/usr`, `/usr/share` and `/usr/share/myfiles`. If you use the standard 755 for directories and 644 for files (umask: 022), you should not run into this problem. To check for ownership and permissions on a path, we can use the `namei` utility like this -
+
+	namei -l /path/to/check
 
 ###Directory index is not properly defined
 
