@@ -38,7 +38,7 @@ If your blog is at the root of the domain (something like `http://www.myblog.com
 
 	try_files $uri $uri/ /index.php?$args;
 
-Here, Nginx checks for the existence of a file at the URL (`$uri`), then for a directory (`$uri/`). If it doesn't find a directory or a file, it performs an internal redirect to `/index.php` passing the URL as pathinfo.
+Here, Nginx checks for the existence of a file at the URL (`$uri`), then for a directory (`$uri/`). If it doesn't find a directory or a file, it performs an internal redirect to `/index.php` passing the query string arguments as parameters.
   
 It should look like this after the edits :
 
@@ -50,7 +50,7 @@ It should look like this after the edits :
 If your blog is in a subfolder (say /blog), you'll have to add an extra `location /blog/` block to your configuration file :
 
 	location /blog/ {
-		try_files $uri $uri/ /blog/index.php?q=$uri&$args;
+		try_files $uri $uri/ /blog/index.php?$args;
 	}
 
 After you have finished making the changes in the configuration file, reload
