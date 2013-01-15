@@ -36,7 +36,7 @@ to be internally handled. This will also work for 404 requests.
 
 If your blog is at the root of the domain (something like `http://www.myblog.com`), find the `location /` block inside the configuration file, and add the following line to it.
 
-	try_files $uri $uri/ /index.php?q=$uri&$args;
+	try_files $uri $uri/ /index.php?$args;
 
 Here, Nginx checks for the existence of a file at the URL (`$uri`), then for a directory (`$uri/`). If it doesn't find a directory or a file, it performs an internal redirect to `/index.php` passing the URL as pathinfo.
   
@@ -44,7 +44,7 @@ It should look like this after the edits :
 
 	location / {
 		index index.php index.html index.htm;
-		try_files $uri $uri/ /index.php?q=$uri&$args;
+		try_files $uri $uri/ /index.php?$args;
 	}
 
 If your blog is in a subfolder (say /blog), you'll have to add an extra `location /blog/` block to your configuration file :
