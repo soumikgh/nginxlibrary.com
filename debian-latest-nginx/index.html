@@ -1,0 +1,364 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Installing the latest version of Nginx on Debian - Nginx Library</title>
+  <meta name="author" content="Soumik Ghosh">
+
+  
+  <!-- <meta name="description" content="Installing the latest version of Nginx on Debian Jun 5th, 2011 The Nginx package in the Debian stable repositories can be quite outdated. It
+is &hellip;"> -->
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://soumikgh.github.com/nginxlibrary/debian-latest-nginx/" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link rel="icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Nginx Library" type="application/atom+xml" />
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+<!-- Piwik --> 
+<script type="text/javascript">
+var pkBaseURL = (("https:" == document.location.protocol) ? "https://hosted-oswa.org/piwik/" : "http://hosted-oswa.org/piwik/");
+
+document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script type="text/javascript">
+try {
+var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 3);
+piwikTracker.trackPageView();
+piwikTracker.enableLinkTracking();
+} catch( err ) {}
+</script><noscript><p><img src="http://hosted-oswa.org/piwik/piwik.php?idsite=3" style="border:0" alt="" /></p></noscript>
+
+<!-- End Piwik Tracking Code -->
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Nginx Library</a></h1>
+  
+    <h2>A repository of Nginx-related articles</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:soumikgh.github.com/nginxlibrary" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/about/">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Installing the latest version of Nginx on Debian</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-06-05T04:32:39+00:00" pubdate data-updated="true">Jun 5<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>The Nginx package in the Debian stable repositories can be quite outdated. It
+is often several version behind the latest, whereas the Nginx package from the
+testing/unstable repositories is updated frequently with newer versions of
+Nginx. We can use apt-pinning to get the a newer version of Nginx (the one
+present in the testing/unstable repositories) and it&#8217;s dependencies (if
+required) will be met from the testing/unstable repositories as well.</p>
+
+<p>Let us first add the testing/unstable repositories to the software sources
+list.</p>
+
+<pre><code>vi /etc/apt/sources.list
+</code></pre>
+
+<p>Add these lines at the end of the file :</p>
+
+<pre><code>deb http://ftp.debian.org/debian/ testing main contrib non-free
+deb-src http://ftp.debian.org/debian/ testing main contrib non-free
+</code></pre>
+
+<p>Replace <code>testing</code> with <code>unstable</code> if you want to add the unstable repositories
+instead of testing.</p>
+
+<p>Now we need to pin the nginx package in testing/unstable to a higher priority
+so that it gets selected. Actually, in Debian, nginx is a meta-package that
+selects the <a href="http://packages.debian.org/testing/nginx-full">nginx-full</a> package. So, if you want to use <a href="http://packages.debian.org/testing/nginx-light">nginx-light</a>
+or <a href="http://packages.debian.org/testing/nginx-extras">nginx-extras</a>, use them instead of just &#8220;nginx&#8221;.</p>
+
+<pre><code>vi /etc/apt/preferences
+</code></pre>
+
+<p>Add these lines :</p>
+
+<pre><code>Package: nginx
+Pin: release a=testing
+Pin-Priority: 900
+</code></pre>
+
+<p>As explained before, you can use nginx-light or nginx-extra instead of nginx
+here. You can also use unstable instead of testing.</p>
+
+<p>Now, run :</p>
+
+<pre><code>apt-get update
+</code></pre>
+
+<p>Check whether the newer version of nginx is selected for install by running :</p>
+
+<pre><code>apt-cache policy nginx
+</code></pre>
+
+<p>Finally, install/upgrade nginx by running :</p>
+
+<pre><code>apt-get install nginx
+</code></pre>
+
+<p>or</p>
+
+<pre><code>apt-get upgrade nginx
+</code></pre>
+
+<p>You&#8217;ll have a relatively newer version of Nginx installed after finishing
+this.</p>
+</div>
+If you find this article helpful, please consider <a href="/donate/">making a donation</a>.
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Soumik Ghosh</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-06-05T04:32:39+00:00" pubdate data-updated="true">Jun 5<span>th</span>, 2011</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/category/server-configuration/'>Server Configuration</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://soumikgh.github.com/nginxlibrary/debian-latest-nginx/" data-via="" data-counturl="http://soumikgh.github.com/nginxlibrary/debian-latest-nginx/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/nginx-1-0-4-has-been-released/" title="Previous Post: Nginx 1.0.4 has been released">&laquo; Nginx 1.0.4 has been released</a>
+      
+      
+        <a class="basic-alignment right" href="/php-fastcgi/" title="Next Post: Setting up PHP FastCGI">Setting up PHP FastCGI &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Categories</h1>
+  <ul id="categories">
+  	<li><a href="/category/server-configuration/">Server Configuration</a></li>
+  	<li><a href="/category/general-configuration/">General Configuration</a></li>
+	<li><a href="/category/application-specific-configuration/">Application-specific Configuration</a></li>
+  	<li><a href="/category/new-releases/">New Releases</a></li>
+        <li><a href="/category/general/">General</a></li>
+  </ul>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/xenforo-configuration/">Nginx configuration for XenForo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/phpbb-configuration/">Nginx configuration for phpBB</a>
+      </li>
+    
+      <li class="post">
+        <a href="/403-forbidden-error/">Resolving "403 Forbidden" error</a>
+      </li>
+    
+      <li class="post">
+        <a href="/using-cloudflare-for-country-blocking/">Using CloudFlare for country blocking</a>
+      </li>
+    
+      <li class="post">
+        <a href="/nginx-1-0-11-has-been-released/">Nginx 1.0.11 has been released</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+<section class="googleplus googleplus-hidden">
+  <h1>
+    <a href="https://plus.google.com/109437240070931117441?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Soumik Ghosh -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'nginxlibrary';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://soumikgh.github.com/nginxlibrary/debian-latest-nginx/';
+        var disqus_url = 'http://soumikgh.github.com/nginxlibrary/debian-latest-nginx/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+<script type="text/javascript">
+var sc_project=6240294;
+var sc_invisible=1;
+var sc_security="4ec3a4e1";
+</script>
+
+<script type="text/javascript"
+src="http://www.statcounter.com/counter/counter.js"></script>
+<noscript><div class="s"><img
+class="s"
+src="http://c.statcounter.com/6240294/0/4ec3a4e1/1/"
+alt="" /></div></noscript>
+
+
+
+</body>
+</html>

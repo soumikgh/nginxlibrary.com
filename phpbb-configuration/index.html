@@ -1,0 +1,343 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Nginx configuration for phpBB - Nginx Library</title>
+  <meta name="author" content="Soumik Ghosh">
+
+  
+  <!-- <meta name="description" content="Nginx configuration for phpBB Apr 8th, 2012 I had previously written an article about converting phpBB&#8217;s default htaccess rules to Nginx. Here &hellip;"> -->
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://soumikgh.github.com/nginxlibrary/phpbb-configuration/" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link rel="icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Nginx Library" type="application/atom+xml" />
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+<!-- Piwik --> 
+<script type="text/javascript">
+var pkBaseURL = (("https:" == document.location.protocol) ? "https://hosted-oswa.org/piwik/" : "http://hosted-oswa.org/piwik/");
+
+document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script type="text/javascript">
+try {
+var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 3);
+piwikTracker.trackPageView();
+piwikTracker.enableLinkTracking();
+} catch( err ) {}
+</script><noscript><p><img src="http://hosted-oswa.org/piwik/piwik.php?idsite=3" style="border:0" alt="" /></p></noscript>
+
+<!-- End Piwik Tracking Code -->
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Nginx Library</a></h1>
+  
+    <h2>A repository of Nginx-related articles</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:soumikgh.github.com/nginxlibrary" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/about/">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Nginx configuration for phpBB</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2012-04-08T20:02:53+00:00" pubdate data-updated="true">Apr 8<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I had previously <a href="http://nginxlibrary.com/converting-phpbbs-default-htaccess-for-nginx/">written an article</a> about converting phpBB&#8217;s default htaccess rules to Nginx. Here I&#8217;ll share a full-blown Nginx configuration file for serving a phpBB forum.</p>
+
+<p>This configuration file :</p>
+
+<blockquote><ul>
+<li>Redirects www sub domain to the bare domain along with any parked domains.</li>
+<li>Prevents external access to files and directories like config.php, avatar upload directory, etc.</li>
+<li>Sets proper Expires header for images.</li>
+</ul>
+</blockquote>
+
+<pre><code>server {
+    listen   [::]:80;
+    server_name  www.domain.com parkeddomain.com *.parkeddomain.com;
+    rewrite ^    http://domain.com$request_uri? permanent;
+}
+
+server {
+    listen   [::]:80;
+    server_name  domain.com;
+    root   /var/www/domain.com;
+    index  index.php index.html index.htm;
+    access_log  /var/logs/domain.com.access.log;
+
+    location ~ /(config\.php|common\.php|cache|files|images/avatars/upload|includes|store) {
+        deny all;
+        return 403;
+    }
+
+    location ~* \.(gif|jpe?g|png|css)$ {
+        expires   30d;
+    }
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_pass   unix:/tmp/php.socket;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}
+</code></pre>
+</div>
+If you find this article helpful, please consider <a href="/donate/">making a donation</a>.
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Soumik Ghosh</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2012-04-08T20:02:53+00:00" pubdate data-updated="true">Apr 8<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/category/application-specific-configuration/'>Application-specific configuration</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://soumikgh.github.com/nginxlibrary/phpbb-configuration/" data-via="" data-counturl="http://soumikgh.github.com/nginxlibrary/phpbb-configuration/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/403-forbidden-error/" title="Previous Post: Resolving "403 Forbidden" error">&laquo; Resolving "403 Forbidden" error</a>
+      
+      
+        <a class="basic-alignment right" href="/xenforo-configuration/" title="Next Post: Nginx configuration for XenForo">Nginx configuration for XenForo &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Categories</h1>
+  <ul id="categories">
+  	<li><a href="/category/server-configuration/">Server Configuration</a></li>
+  	<li><a href="/category/general-configuration/">General Configuration</a></li>
+	<li><a href="/category/application-specific-configuration/">Application-specific Configuration</a></li>
+  	<li><a href="/category/new-releases/">New Releases</a></li>
+        <li><a href="/category/general/">General</a></li>
+  </ul>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/xenforo-configuration/">Nginx configuration for XenForo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/phpbb-configuration/">Nginx configuration for phpBB</a>
+      </li>
+    
+      <li class="post">
+        <a href="/403-forbidden-error/">Resolving "403 Forbidden" error</a>
+      </li>
+    
+      <li class="post">
+        <a href="/using-cloudflare-for-country-blocking/">Using CloudFlare for country blocking</a>
+      </li>
+    
+      <li class="post">
+        <a href="/nginx-1-0-11-has-been-released/">Nginx 1.0.11 has been released</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+<section class="googleplus googleplus-hidden">
+  <h1>
+    <a href="https://plus.google.com/109437240070931117441?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Soumik Ghosh -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'nginxlibrary';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://soumikgh.github.com/nginxlibrary/phpbb-configuration/';
+        var disqus_url = 'http://soumikgh.github.com/nginxlibrary/phpbb-configuration/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+<script type="text/javascript">
+var sc_project=6240294;
+var sc_invisible=1;
+var sc_security="4ec3a4e1";
+</script>
+
+<script type="text/javascript"
+src="http://www.statcounter.com/counter/counter.js"></script>
+<noscript><div class="s"><img
+class="s"
+src="http://c.statcounter.com/6240294/0/4ec3a4e1/1/"
+alt="" /></div></noscript>
+
+
+
+</body>
+</html>

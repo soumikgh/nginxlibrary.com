@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Application-specific configuration | Nginx Library]]></title>
+  <link href="http://soumikgh.github.com/nginxlibrary/category/application-specific-configuration/atom.xml" rel="self"/>
+  <link href="http://soumikgh.github.com/nginxlibrary/"/>
+  <updated>2013-10-17T14:57:44+00:00</updated>
+  <id>http://soumikgh.github.com/nginxlibrary/</id>
+  <author>
+    <name><![CDATA[Soumik Ghosh]]></name>
+    <email><![CDATA[contactSoumik@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Nginx configuration for XenForo]]></title>
+    <link href="http://soumikgh.github.com/nginxlibrary/xenforo-configuration/"/>
+    <updated>2012-04-10T19:45:53+00:00</updated>
+    <id>http://soumikgh.github.com/nginxlibrary/xenforo-configuration</id>
+    <content type="html"><![CDATA[<p>Writing a configuration file for XenForo is pretty simple and very similar to the <a href="http://nginxlibrary.com/wordpress-permalinks/">Wordpress configuration</a> where requests are internally redirected to the index.php file. With this configuration XenForo's friendly URLs work perfectly, as well as external access is cut off for some directories like <code>libraries</code>
+ and <code>internal_data</code>.</p>
+
+<pre><code>server {
+    listen   [::]:80;
+    server_name  example.com www.example.com;
+    root   /var/www/example.com;
+    index  index.html index.htm index.php;
+    access_log  /var/www/logs/example.com.access.log;  
+
+    location / {
+        try_files $uri $uri/ /index.php?$uri&amp;$args;
+    }
+
+    location ~ /(internal_data|library) {
+         internal;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass   unix:/tmp/php.socket;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }   
+}
+</code></pre>
+
+<p>For a XenForo installation in a sub directory <code>xenforo</code>, the configuration should be like this:</p>
+
+<pre><code>server {
+    listen   [::]:80;
+    server_name  example.com www.example.com;
+    root   /var/www/example.com;
+    index  index.html index.htm index.php;
+    access_log  /var/www/logs/example.com.access.log;  
+
+    location /xenforo/ {
+        try_files $uri $uri/ /xenforo/index.php?$uri&amp;$args;
+    }
+
+    location ~ /xenforo/(internal_data|library) {
+         internal;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass   unix:/tmp/php.socket;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }   
+}
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Nginx configuration for phpBB]]></title>
+    <link href="http://soumikgh.github.com/nginxlibrary/phpbb-configuration/"/>
+    <updated>2012-04-08T20:02:53+00:00</updated>
+    <id>http://soumikgh.github.com/nginxlibrary/phpbb-configuration</id>
+    <content type="html"><![CDATA[<p>I had previously <a href="http://nginxlibrary.com/converting-phpbbs-default-htaccess-for-nginx/">written an article</a> about converting phpBB's default htaccess rules to Nginx. Here I'll share a full-blown Nginx configuration file for serving a phpBB forum.</p>
+
+<p>This configuration file :</p>
+
+<blockquote><ul>
+<li>Redirects www sub domain to the bare domain along with any parked domains.</li>
+<li>Prevents external access to files and directories like config.php, avatar upload directory, etc.</li>
+<li>Sets proper Expires header for images.</li>
+</ul>
+</blockquote>
+
+<pre><code>server {
+    listen   [::]:80;
+    server_name  www.domain.com parkeddomain.com *.parkeddomain.com;
+    rewrite ^    http://domain.com$request_uri? permanent;
+}
+
+server {
+    listen   [::]:80;
+    server_name  domain.com;
+    root   /var/www/domain.com;
+    index  index.php index.html index.htm;
+    access_log  /var/logs/domain.com.access.log;
+
+    location ~ /(config\.php|common\.php|cache|files|images/avatars/upload|includes|store) {
+        deny all;
+        return 403;
+    }
+
+    location ~* \.(gif|jpe?g|png|css)$ {
+        expires   30d;
+    }
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_pass   unix:/tmp/php.socket;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Converting phpBB's default .htaccess for nginx]]></title>
+    <link href="http://soumikgh.github.com/nginxlibrary/converting-phpbbs-default-htaccess-for-nginx/"/>
+    <updated>2011-05-11T11:50:53+00:00</updated>
+    <id>http://soumikgh.github.com/nginxlibrary/converting-phpbbs-default-htaccess-for-nginx</id>
+    <content type="html"><![CDATA[<p>phpBB ships with a small .htaccess file in the root that has rules to
+deny access to the config.php and common.php files in the absence of a PHP
+interpreter. I'll duplicate those rules for an Nginx configuration.</p>
+
+<p>Here's how the .htaccess file looks like :</p>
+
+<pre><code>Order Allow,Deny
+Deny from All
+
+Order Allow,Deny
+Deny from All
+</code></pre>
+
+<p>And here's what you need to add to your Nginx configuration file in order to
+duplicate that behaviour :</p>
+
+<pre><code>location ~ /config.php|/common.php {
+    deny all;
+}
+</code></pre>
+
+<p>This will deny access to all instances of config/common.php located in the
+document root, regardless of where they are located.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Wordpress permalinks]]></title>
+    <link href="http://soumikgh.github.com/nginxlibrary/wordpress-permalinks/"/>
+    <updated>2010-09-05T14:23:59+00:00</updated>
+    <id>http://soumikgh.github.com/nginxlibrary/wordpress-permalinks</id>
+    <content type="html"><![CDATA[<p>Wordpress generally works out-of-the box on nginx. The
+posts load fine, the functions in the dashboard work pretty well, until you
+come to the permalinks. If you are on Apache, with mod_rewrite, Wordpress will
+automatically add the required rewrite rules to your <code>.htaccess</code> file for
+permalinks to work. But for nginx, you have to add the rules manually.</p>
+
+<p>Moreover, when WordPress detects that mod_rewrite is not loaded (which is the
+case with nginx), it falls back to using <a href="http://codex.wordpress.org/Using_Permalinks#PATHINFO:_.22Almost_Pretty.22"><code>PATHINFO</code></a> permalinks, which
+inserts an extra 'index.php' in front. This hasn't been much of a problem for
+me as I have been using the custom structure option to remove the index.php.
+It has been working fine for me. (Screenshot below)</p>
+
+<p><img src="http://nginxlibrary.com/images/post-images/2010/nginx_wordpress_permalinks.jpg" title="nginx wordpress permalinks" alt="2" /></p>
+
+<p>Apart from that, you will also need to edit your nginx configuration file to
+make the permalinks work. We will use the <a href="http://wiki.nginx.org/NginxHttpCoreModule#try_files"><code>try_files</code> directive</a>
+(available from nginx 0.7.27+) to pass URLs to Wordpress's index.php for them
+to be internally handled. This will also work for 404 requests.</p>
+
+<p>If your blog is at the root of the domain (something like <code>http://www.myblog.com</code>), find the <code>location /</code> block inside the configuration file, and add the following line to it.</p>
+
+<pre><code>try_files $uri $uri/ /index.php?$args;
+</code></pre>
+
+<p>Here, Nginx checks for the existence of a file at the URL (<code>$uri</code>), then for a directory (<code>$uri/</code>). If it doesn't find a directory or a file, it performs an internal redirect to <code>/index.php</code> passing the query string arguments as parameters.</p>
+
+<p>It should look like this after the edits :</p>
+
+<pre><code>location / {
+    index index.php index.html index.htm;
+    try_files $uri $uri/ /index.php?$args;
+}
+</code></pre>
+
+<p>If your blog is in a subfolder (say /blog), you'll have to add an extra <code>location /blog/</code> block to your configuration file :</p>
+
+<pre><code>location /blog/ {
+    try_files $uri $uri/ /blog/index.php?$args;
+}
+</code></pre>
+
+<p>After you have finished making the changes in the configuration file, reload
+the nginx configuration by :</p>
+
+<pre><code>nginx -s reload
+</code></pre>
+
+<p>Wordpress' pretty permalinks should work fine now.</p>
+]]></content>
+  </entry>
+  
+</feed>

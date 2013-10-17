@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Server Configuration | Nginx Library]]></title>
+  <link href="http://soumikgh.github.com/nginxlibrary/category/server-configuration/atom.xml" rel="self"/>
+  <link href="http://soumikgh.github.com/nginxlibrary/"/>
+  <updated>2013-10-17T14:57:44+00:00</updated>
+  <id>http://soumikgh.github.com/nginxlibrary/</id>
+  <author>
+    <name><![CDATA[Soumik Ghosh]]></name>
+    <email><![CDATA[contactSoumik@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Setting up PHP FastCGI]]></title>
+    <link href="http://soumikgh.github.com/nginxlibrary/php-fastcgi/"/>
+    <updated>2011-07-07T04:20:54+00:00</updated>
+    <id>http://soumikgh.github.com/nginxlibrary/php-fastcgi</id>
+    <content type="html"><![CDATA[<p>In a previous post, we had written about setting up Perl-FastCGI on Nginx.
+This article is about setting up PHP-FastCGI. As always, this article assumes
+that you are running on Debian Squeeze (or above) and uses aptitude/apt-get
+for fetching and installing packages.</p>
+
+<p>Install these packages :</p>
+
+<pre><code>apt-get install nginx php5-cgi
+</code></pre>
+
+<p>We'll now replace Nginx's package maintainer's vhosts file with our own.</p>
+
+<pre><code>mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.old
+vi /etc/nginx/sites-available/default
+</code></pre>
+
+<p>Put this in the file :</p>
+
+<pre><code>server {
+    listen   [::]:80;
+    server_name  example.com; # Replace this with your own
+    root   /var/www/example.com;
+    index  index.html index.htm index.php;
+    access_log  /var/www/logs/example.com.access.log;  
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_pass   unix:/tmp/php.socket;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }   
+}
+</code></pre>
+
+<p>Now, there are some tutorials on the internet which wrongly configure Nginx and introduce an arbitrary code execution bug. Note that Nginx passes a request to the php-cgi daemon if the <code>REQUEST_URI</code> has a trailing <code>.php</code>. It does not check whether the file exists or not. Suppose a request is made for <code>/images/dog.jpg/test.php</code>. Nginx will match the trailing <code>.php</code> and pass the request to php-cgi. Now, if test.php does not exist and <code>cgi.fix_pathinfo</code> is set to 1, php-cgi will  try to execute <code>/images/dog.jpg</code> with <code>/test.php</code> as pathinfo. This is especially dangerous if you have a public upload directory. In our configuration, this will not happen even if <code>cgi.fix_pathinfo</code> is set to 1. The <code>try_files $uri =404;</code> line checks for the existence of the .php file and returns a 404 response header if it does not exist. Alternatively, <code>cgi.fix_pathinfo</code> can be set to 0, but is is not required as our configuration takes care of it.</p>
+
+<p>Now we'll use a Debian init script to control the php-cgi daemon which will be
+running on port 9000.</p>
+
+<pre><code>vi /etc/init.d/php-fcgi
+</code></pre>
+
+<p>Add this in the file :</p>
+
+<pre><code>#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          php-cgi
+# Required-Start:    networking
+# Required-Stop:     networking
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start the PHP FastCGI daemon.
+### END INIT INFO  
+BIND=/tmp/php.socket
+USER=www-data
+PHP_FCGI_CHILDREN=2
+PHP_FCGI_MAX_REQUESTS=5000  
+PHP_CGI=/usr/bin/php-cgi
+PHP_CGI_NAME=`basename $PHP_CGI`
+PHP_CGI_ARGS="- USER=$USER PATH=/usr/bin PHP_FCGI_CHILDREN=$PHP_FCGI_CHILDREN PHP_FCGI_MAX_REQUESTS=$PHP_FCGI_MAX_REQUESTS $PHP_CGI -b $BIND"
+RETVAL=0  
+start() {
+      echo -n "Starting PHP FastCGI: "
+      start-stop-daemon --quiet --start --background --chuid "$USER" --exec /usr/bin/env -- $PHP_CGI_ARGS
+      RETVAL=$?
+      echo "$PHP_CGI_NAME."
+}
+stop() {
+      echo -n "Stopping PHP FastCGI: "
+      killall -q -w -u $USER $PHP_CGI
+      RETVAL=$?
+      echo "$PHP_CGI_NAME."
+}  
+case "$1" in
+    start)
+      start
+  ;;
+    stop)
+      stop
+  ;;
+    restart)
+      stop
+      start
+  ;;
+    *)
+      echo "Usage: php-fcgi {start|stop|restart}"
+      exit 1
+  ;;
+esac
+exit $RETVAL
+</code></pre>
+
+<p>This can also be done in one line if you have shell access on your server :</p>
+
+<pre><code>wget http://nginxlibrary.com/downloads/php-fcgi/php-fcgi -O /etc/init.d/php-fcgi
+</code></pre>
+
+<p>Give the file executable permissions and make it start during booting :</p>
+
+<pre><code>chmod +x /etc/init.d/php-fcgi &amp;&amp; insserv php-fcgi
+</code></pre>
+
+<p>Finally, start the fastcgi daemon :</p>
+
+<pre><code>invoke-rc.d php-fcgi start
+</code></pre>
+
+<p>To check that it is working properly, create this file :</p>
+
+<pre><code>vi /var/www/example.com/info.php
+</code></pre>
+
+<p>Put this in it :</p>
+
+<pre><code>&lt;?php phpinfo(); ?&gt;
+</code></pre>
+
+<p>Now go to <code>http://example.com/info.php</code> and you'll get the PHP information
+page showing information about the loaded modules.</p>
+
+<p>Now, there are a couple of options you can change in the PHP-FastCGI init
+script, namely, <code>PHP_FCGI_CHILDREN</code> and <code>PHP_FCGI_MAX_REQUESTS</code>.
+<code>PHP_FCGI_CHILDREN</code> specifies the number of child processes the php-cgi master
+process will spawn. Usually, two, or, even one is sufficient for a medium-
+traffic site. <code>PHP_FCGI_MAX_REQUESTS</code> specifies the number of requests each
+child process will serve before being terminated and respawned.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Installing the latest version of Nginx on Debian]]></title>
+    <link href="http://soumikgh.github.com/nginxlibrary/debian-latest-nginx/"/>
+    <updated>2011-06-05T04:32:39+00:00</updated>
+    <id>http://soumikgh.github.com/nginxlibrary/debian-latest-nginx</id>
+    <content type="html"><![CDATA[<p>The Nginx package in the Debian stable repositories can be quite outdated. It
+is often several version behind the latest, whereas the Nginx package from the
+testing/unstable repositories is updated frequently with newer versions of
+Nginx. We can use apt-pinning to get the a newer version of Nginx (the one
+present in the testing/unstable repositories) and it's dependencies (if
+required) will be met from the testing/unstable repositories as well.</p>
+
+<p>Let us first add the testing/unstable repositories to the software sources
+list.</p>
+
+<pre><code>vi /etc/apt/sources.list
+</code></pre>
+
+<p>Add these lines at the end of the file :</p>
+
+<pre><code>deb http://ftp.debian.org/debian/ testing main contrib non-free
+deb-src http://ftp.debian.org/debian/ testing main contrib non-free
+</code></pre>
+
+<p>Replace <code>testing</code> with <code>unstable</code> if you want to add the unstable repositories
+instead of testing.</p>
+
+<p>Now we need to pin the nginx package in testing/unstable to a higher priority
+so that it gets selected. Actually, in Debian, nginx is a meta-package that
+selects the <a href="http://packages.debian.org/testing/nginx-full">nginx-full</a> package. So, if you want to use <a href="http://packages.debian.org/testing/nginx-light">nginx-light</a>
+or <a href="http://packages.debian.org/testing/nginx-extras">nginx-extras</a>, use them instead of just "nginx".</p>
+
+<pre><code>vi /etc/apt/preferences
+</code></pre>
+
+<p>Add these lines :</p>
+
+<pre><code>Package: nginx
+Pin: release a=testing
+Pin-Priority: 900
+</code></pre>
+
+<p>As explained before, you can use nginx-light or nginx-extra instead of nginx
+here. You can also use unstable instead of testing.</p>
+
+<p>Now, run :</p>
+
+<pre><code>apt-get update
+</code></pre>
+
+<p>Check whether the newer version of nginx is selected for install by running :</p>
+
+<pre><code>apt-cache policy nginx
+</code></pre>
+
+<p>Finally, install/upgrade nginx by running :</p>
+
+<pre><code>apt-get install nginx
+</code></pre>
+
+<p>or</p>
+
+<pre><code>apt-get upgrade nginx
+</code></pre>
+
+<p>You'll have a relatively newer version of Nginx installed after finishing
+this.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Running CGI scripts using thttpd]]></title>
+    <link href="http://soumikgh.github.com/nginxlibrary/running-cgi-scripts-using-thttpd/"/>
+    <updated>2011-04-22T05:42:23+00:00</updated>
+    <id>http://soumikgh.github.com/nginxlibrary/running-cgi-scripts-using-thttpd</id>
+    <content type="html"><![CDATA[<p>Nginx cannot run CGI scripts natively. You have to either use the <a href="http://www.nginxlibrary.com/perl-fastcgi/" title="Setting up Perl FastCGI with Nginx">Perl-FastCGI daemon</a> to run your Perl scripts, or for a more "native" CGI
+environment, proxy the CGI scripts to a web-server that has the ability to
+execute them natively. Apache, surely, will be overkill for this purpose.
+Keeping in mind the low-memory requirements of most users who run Nginx, we'll
+use thttpd. <a href="http://www.acme.com/software/thttpd/" title="thttpd home page">thttpd</a> is a tiny, lightweight server (only around 800 kB RSS)
+which has the ability to execute CGI scripts natively.</p>
+
+<p>First, let us install thttpd. thttpd hasn't been in active development since
+late 2003 (v2.25b), but there isn't any security issue with it. The only issue
+is that it doesn't respect (or pass on) the <a href="http://en.wikipedia.org/wiki/X-Forwarded-For">X-Forwarded-For</a> header. So,
+if you are using Debian 5.0.X Lenny, please build from source after applying
+<a href="http://wiki.nginx.org/index.php?title=ThttpdRealIP&amp;action=raw&amp;anchor=thttpd.patch">this patch</a> or install from the Squeeze repositories using <a href="http://jaqque.sbih.org/kplug/apt-pinning.html" title="Apt-Pinning">apt-pinning</a> (This issue was fixed in <a href="http://packages.debian.org/changelogs/pool/main/t/thttpd/thttpd_2.25b-11/changelog#versionversion2.25b-10">v2.25b-10</a>) .</p>
+
+<p>Assuming you are using Debian Squeeze,</p>
+
+<pre><code>apt-get install thttpd
+</code></pre>
+
+<p>Replace the thttpd configuration file with our own :</p>
+
+<pre><code>mv /etc/thttpd/thttpd.conf /etc/thttpd/thttpd.conf.orig
+vi /etc/thttpd/thttpd.conf
+</code></pre>
+
+<p>Put this in the file :</p>
+
+<pre><code>host=127.0.0.1
+port=8000
+dir=/var/www  #change this to the $document_root from nginx config file
+user=www-data
+cgipat=**.cgi|**.pl
+logfile=/var/log/thttpd.log
+pidfile=/var/run/thttpd.pid
+</code></pre>
+
+<p>Now let us start thttpd.</p>
+
+<pre><code>invoke-rc.d thttpd start
+</code></pre>
+
+<p>We also need to configure nginx to pass on the requests for CGI scripts to
+thttpd. Add this to your configuration file :</p>
+
+<pre><code>location ~ \.cgi|pl$ {
+     proxy_pass   http://127.0.0.1:8000;
+     include proxy.conf;
+}
+</code></pre>
+
+<p>We also need to create a file with some configuration parameters for nginx :</p>
+
+<pre><code>vi /etc/nginx/proxy.conf
+</code></pre>
+
+<p>Put this in the file :</p>
+
+<pre><code>proxy_redirect          off;
+proxy_set_header        Host            $host;
+proxy_set_header        X-Real-IP       $remote_addr;
+proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+client_max_body_size    10m;
+client_body_buffer_size 128k;
+proxy_connect_timeout   90;
+proxy_send_timeout      90;
+proxy_read_timeout      90;
+proxy_buffers           32 4k;
+</code></pre>
+
+<p>Now let us reload the Nginx configuration :</p>
+
+<pre><code>nginx -s reload
+</code></pre>
+
+<p>CGI scripts should be now transparently proxied to and executed by thttpd
+running on port 8000.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Installing the latest version of Nginx on Ubuntu]]></title>
+    <link href="http://soumikgh.github.com/nginxlibrary/ubuntu-latest-nginx/"/>
+    <updated>2011-04-11T14:57:49+00:00</updated>
+    <id>http://soumikgh.github.com/nginxlibrary/ubuntu-latest-nginx</id>
+    <content type="html"><![CDATA[<p>The Nginx release on the Ubuntu repositories is often outdated. Igor pushes
+out new versions of Nginx quite frequently and it's understandable that the
+Ubuntu package maintainers do not keep up. Also, Ubuntu only includes major
+version updates with new OS releases. So, if the Nginx development branch
+turns stable, and you plan on staying on your LTS (Long Term Support) version,
+you might not be able to get the newer version of Nginx unless you upgrade
+your OS.</p>
+
+<p>So, in view of all this, <a href="http://profarius.com/">Michael Lustfield</a> and a bunch of other cool
+folks maintain a Launchpad PPA <a href="https://launchpad.net/~nginx">where they provide</a> the latest versions of
+Nginx from both the stable and development branch. To get the latest version
+of Nginx from the PPA, follow these steps :</p>
+
+<pre><code>add-apt-repository ppa:nginx/stable
+apt-get update &amp;&amp; apt-get install nginx
+</code></pre>
+
+<p>Use <code>ppa:nginx/development</code> to get the latest development version.</p>
+
+<p>If you want to do it manually, you'll need to edit your sources.list, import
+the appropriate key, and then install/upgrade Nginx.</p>
+
+<pre><code>echo "deb http://ppa.launchpad.net/nginx/stable/ubuntu $(lsb_release -cs) main" &gt;&gt; /etc/apt/sources.list
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C300EE8C
+apt-get update &amp;&amp; apt-get install nginx
+</code></pre>
+
+<p>Here too you can use <code>deb http://ppa.launchpad.net/nginx/development/ubuntu
+$(lsb_release -cs) main</code> to get the latest development version.</p>
+
+<p>You now have the latest version of Nginx on your server. Ubuntu will also
+automatically pull down and install updates for Nginx if they are available.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Setting up Perl FastCGI with Nginx]]></title>
+    <link href="http://soumikgh.github.com/nginxlibrary/perl-fastcgi/"/>
+    <updated>2011-02-23T05:09:18+00:00</updated>
+    <id>http://soumikgh.github.com/nginxlibrary/perl-fastcgi</id>
+    <content type="html"><![CDATA[<p>This article assumes that you are running on Debian Lenny (or above) and uses
+aptitude/apt-get for fetching and installing packages.</p>
+
+<p>Install these packages :</p>
+
+<pre><code>apt-get install nginx libfcgi-perl wget
+</code></pre>
+
+<p>Now we replace Nginx's package maintainer's vhosts file with our own.</p>
+
+<pre><code>mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.old
+vi /etc/nginx/sites-available/default
+</code></pre>
+
+<p>Put these as the file contents :</p>
+
+<p>```
+server {</p>
+
+<pre><code>listen   80;
+server_name  example.com www.example.com;
+root   /var/www/example.com;
+access_log  /var/www/logs/example.com.access.log;  
+
+location / {
+    index  index.html index.htm index.pl;
+}  
+
+location ~ \.pl|cgi$ {
+    try_files $uri =404;
+    gzip off;
+    fastcgi_pass  127.0.0.1:8999;
+    fastcgi_index index.pl;
+    fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+    include fastcgi_params;
+} 
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Now let us create the directory where the site will reside and assign proper
+ownership to it.</p>
+
+<pre><code>mkdir /var/www/example.com
+chown -R www-data:www-data /var/www/example.com
+</code></pre>
+
+<p>Next, we should download and configure a FastCGI wrapper script (credit: <a href="http://www.ruby-forum.com/topic/145858#645832">Denis
+S. Filimonov</a>), a Debian init script to start/stop the FastCGI process, give
+them the necessary permissions to be executed and set the init script to start
+up the FastCGI daemon automatically.</p>
+
+<pre><code>wget http://nginxlibrary.com/downloads/perl-fcgi/fastcgi-wrapper -O /usr/bin/fastcgi-wrapper.pl
+wget http://nginxlibrary.com/downloads/perl-fcgi/perl-fcgi -O /etc/init.d/perl-fcgi
+chmod +x /usr/bin/fastcgi-wrapper.pl
+chmod +x /etc/init.d/perl-fcgi
+update-rc.d perl-fcgi defaults
+insserv perl-fcgi
+</code></pre>
+
+<p>Now that everything is done, let us start Nginx and test out a sample Perl
+script.</p>
+
+<pre><code>/etc/init.d/nginx start
+/etc/init.d/perl-fcgi start
+vi /var/www/example.com/index.pl
+</code></pre>
+
+<p>Put the following in the file :</p>
+
+<p>``` perl</p>
+
+<h1>!/usr/bin/perl</h1>
+
+<p>print "Content-type:text/html\n\n";
+print &lt;&lt;EndOfHTML;
+<html><head><title>Perl Environment Variables</title></head>
+<body></p>
+
+<h1>Perl Environment Variables</h1>
+
+
+<p>EndOfHTML</p>
+
+<p>foreach $key (sort(keys %ENV)) {</p>
+
+<pre><code>print "$key = $ENV{$key}&lt;br&gt;\n";
+</code></pre>
+
+<p>}</p>
+
+<p>print "</body></html>";
+```</p>
+
+<p>Let us make the script executable by issuing the following command :</p>
+
+<pre><code>chmod a+x /var/www/example.com/index.pl
+</code></pre>
+
+<p>Now, go to example.com and you'll see a list of Perl environment variables if
+everything was done correctly.</p>
+]]></content>
+  </entry>
+  
+</feed>

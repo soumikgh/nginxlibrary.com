@@ -1,0 +1,347 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>IP based country blocking - Nginx Library</title>
+  <meta name="author" content="Soumik Ghosh">
+
+  
+  <!-- <meta name="description" content="IP based country blocking Apr 27th, 2011 To block visitors from a specific country (or countries) using the IP
+addresses, Nginx needs to be compiled &hellip;"> -->
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://soumikgh.github.com/nginxlibrary/ip-based-country-blocking/" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link rel="icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Nginx Library" type="application/atom+xml" />
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+<!-- Piwik --> 
+<script type="text/javascript">
+var pkBaseURL = (("https:" == document.location.protocol) ? "https://hosted-oswa.org/piwik/" : "http://hosted-oswa.org/piwik/");
+
+document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script type="text/javascript">
+try {
+var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 3);
+piwikTracker.trackPageView();
+piwikTracker.enableLinkTracking();
+} catch( err ) {}
+</script><noscript><p><img src="http://hosted-oswa.org/piwik/piwik.php?idsite=3" style="border:0" alt="" /></p></noscript>
+
+<!-- End Piwik Tracking Code -->
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Nginx Library</a></h1>
+  
+    <h2>A repository of Nginx-related articles</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:soumikgh.github.com/nginxlibrary" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/about/">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">IP based country blocking</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-04-27T12:20:35+00:00" pubdate data-updated="true">Apr 27<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>To block visitors from a specific country (or countries) using the IP
+addresses, Nginx needs to be compiled with the <a href="http://wiki.nginx.org/NginxHttpGeoIPModule">GeoIP module</a>. This module
+was introduced in v0.7.63 and 0.8.6. In addition to that you need a Geo
+database. Install these packages under Debian :</p>
+
+<pre><code>apt-get install geoip-database libgeoip1
+</code></pre>
+
+<p>We now need to edit the configuration files. Put this code in the <code>http</code> block
+in <code>/etc/nginx/nginx.conf</code>. It can be also put in your vhosts config file
+outside of the <code>server</code> block.</p>
+
+<pre><code>geoip_country /usr/share/GeoIP/GeoIP.dat;
+map $geoip_country_code $allow_visit {
+    default yes;
+    EG no;
+    FR no;
+    FI no;
+}
+</code></pre>
+
+<p>This code sets the variable <code>$allow_visit</code> to yes or no, depending on the
+country of the visitor. In this example, we have set <code>$allow_visit</code> to no for
+Egypt, France and Finland, and yes for all other countries. Alternately, if
+you want to block all countries except for a few, set the default to no and
+set the variable to yes for a select few. A list of country codes can be found
+<a href="http://www.maxmind.com/app/iso3166">here</a>.</p>
+
+<p>Now we need to use the <code>$allow_visit</code> variable to block visitors. Inside your
+server block, add this :</p>
+
+<pre><code>if ($allow_visit = no) {
+    return 403;
+}
+</code></pre>
+
+<p>This will return the &#8220;403 Forbidden&#8221; page for all visitors from countries
+whose country code is set to no. You can also define a custom 403 page which
+is a bit more helpful than the default one.</p>
+
+<pre><code>error_page 403 /custom_403.html;
+</code></pre>
+
+<p>It is also possible to use this for redirecting users based on their country,
+but that&#8217;ll be explored in another post.</p>
+</div>
+If you find this article helpful, please consider <a href="/donate/">making a donation</a>.
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Soumik Ghosh</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-04-27T12:20:35+00:00" pubdate data-updated="true">Apr 27<span>th</span>, 2011</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/category/general-configuration/'>General Configuration</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://soumikgh.github.com/nginxlibrary/ip-based-country-blocking/" data-via="" data-counturl="http://soumikgh.github.com/nginxlibrary/ip-based-country-blocking/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/running-cgi-scripts-using-thttpd/" title="Previous Post: Running CGI scripts using thttpd">&laquo; Running CGI scripts using thttpd</a>
+      
+      
+        <a class="basic-alignment right" href="/nginx-1-0-1-version-has-been-released/" title="Next Post: Nginx 1.0.1 version has been released">Nginx 1.0.1 version has been released &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Categories</h1>
+  <ul id="categories">
+  	<li><a href="/category/server-configuration/">Server Configuration</a></li>
+  	<li><a href="/category/general-configuration/">General Configuration</a></li>
+	<li><a href="/category/application-specific-configuration/">Application-specific Configuration</a></li>
+  	<li><a href="/category/new-releases/">New Releases</a></li>
+        <li><a href="/category/general/">General</a></li>
+  </ul>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/xenforo-configuration/">Nginx configuration for XenForo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/phpbb-configuration/">Nginx configuration for phpBB</a>
+      </li>
+    
+      <li class="post">
+        <a href="/403-forbidden-error/">Resolving "403 Forbidden" error</a>
+      </li>
+    
+      <li class="post">
+        <a href="/using-cloudflare-for-country-blocking/">Using CloudFlare for country blocking</a>
+      </li>
+    
+      <li class="post">
+        <a href="/nginx-1-0-11-has-been-released/">Nginx 1.0.11 has been released</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+<section class="googleplus googleplus-hidden">
+  <h1>
+    <a href="https://plus.google.com/109437240070931117441?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Soumik Ghosh -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'nginxlibrary';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://soumikgh.github.com/nginxlibrary/ip-based-country-blocking/';
+        var disqus_url = 'http://soumikgh.github.com/nginxlibrary/ip-based-country-blocking/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+<script type="text/javascript">
+var sc_project=6240294;
+var sc_invisible=1;
+var sc_security="4ec3a4e1";
+</script>
+
+<script type="text/javascript"
+src="http://www.statcounter.com/counter/counter.js"></script>
+<noscript><div class="s"><img
+class="s"
+src="http://c.statcounter.com/6240294/0/4ec3a4e1/1/"
+alt="" /></div></noscript>
+
+
+
+</body>
+</html>

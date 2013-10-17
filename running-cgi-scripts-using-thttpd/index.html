@@ -1,0 +1,376 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Running CGI scripts using thttpd - Nginx Library</title>
+  <meta name="author" content="Soumik Ghosh">
+
+  
+  <!-- <meta name="description" content="Running CGI scripts using thttpd Apr 22nd, 2011 Nginx cannot run CGI scripts natively. You have to either use the Perl-FastCGI daemon to run your &hellip;"> -->
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://soumikgh.github.com/nginxlibrary/running-cgi-scripts-using-thttpd/" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link rel="icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Nginx Library" type="application/atom+xml" />
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+<!-- Piwik --> 
+<script type="text/javascript">
+var pkBaseURL = (("https:" == document.location.protocol) ? "https://hosted-oswa.org/piwik/" : "http://hosted-oswa.org/piwik/");
+
+document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script type="text/javascript">
+try {
+var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 3);
+piwikTracker.trackPageView();
+piwikTracker.enableLinkTracking();
+} catch( err ) {}
+</script><noscript><p><img src="http://hosted-oswa.org/piwik/piwik.php?idsite=3" style="border:0" alt="" /></p></noscript>
+
+<!-- End Piwik Tracking Code -->
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Nginx Library</a></h1>
+  
+    <h2>A repository of Nginx-related articles</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:soumikgh.github.com/nginxlibrary" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/about/">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Running CGI scripts using thttpd</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-04-22T05:42:23+00:00" pubdate data-updated="true">Apr 22<span>nd</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Nginx cannot run CGI scripts natively. You have to either use the <a href="http://www.nginxlibrary.com/perl-fastcgi/" title="Setting up Perl FastCGI with Nginx">Perl-FastCGI daemon</a> to run your Perl scripts, or for a more &#8220;native&#8221; CGI
+environment, proxy the CGI scripts to a web-server that has the ability to
+execute them natively. Apache, surely, will be overkill for this purpose.
+Keeping in mind the low-memory requirements of most users who run Nginx, we&#8217;ll
+use thttpd. <a href="http://www.acme.com/software/thttpd/" title="thttpd home page">thttpd</a> is a tiny, lightweight server (only around 800 kB RSS)
+which has the ability to execute CGI scripts natively.</p>
+
+<p>First, let us install thttpd. thttpd hasn&#8217;t been in active development since
+late 2003 (v2.25b), but there isn&#8217;t any security issue with it. The only issue
+is that it doesn&#8217;t respect (or pass on) the <a href="http://en.wikipedia.org/wiki/X-Forwarded-For">X-Forwarded-For</a> header. So,
+if you are using Debian 5.0.X Lenny, please build from source after applying
+<a href="http://wiki.nginx.org/index.php?title=ThttpdRealIP&amp;action=raw&amp;anchor=thttpd.patch">this patch</a> or install from the Squeeze repositories using <a href="http://jaqque.sbih.org/kplug/apt-pinning.html" title="Apt-Pinning">apt-pinning</a> (This issue was fixed in <a href="http://packages.debian.org/changelogs/pool/main/t/thttpd/thttpd_2.25b-11/changelog#versionversion2.25b-10">v2.25b-10</a>) .</p>
+
+<p>Assuming you are using Debian Squeeze,</p>
+
+<pre><code>apt-get install thttpd
+</code></pre>
+
+<p>Replace the thttpd configuration file with our own :</p>
+
+<pre><code>mv /etc/thttpd/thttpd.conf /etc/thttpd/thttpd.conf.orig
+vi /etc/thttpd/thttpd.conf
+</code></pre>
+
+<p>Put this in the file :</p>
+
+<pre><code>host=127.0.0.1
+port=8000
+dir=/var/www  #change this to the $document_root from nginx config file
+user=www-data
+cgipat=**.cgi|**.pl
+logfile=/var/log/thttpd.log
+pidfile=/var/run/thttpd.pid
+</code></pre>
+
+<p>Now let us start thttpd.</p>
+
+<pre><code>invoke-rc.d thttpd start
+</code></pre>
+
+<p>We also need to configure nginx to pass on the requests for CGI scripts to
+thttpd. Add this to your configuration file :</p>
+
+<pre><code>location ~ \.cgi|pl$ {
+     proxy_pass   http://127.0.0.1:8000;
+     include proxy.conf;
+}
+</code></pre>
+
+<p>We also need to create a file with some configuration parameters for nginx :</p>
+
+<pre><code>vi /etc/nginx/proxy.conf
+</code></pre>
+
+<p>Put this in the file :</p>
+
+<pre><code>proxy_redirect          off;
+proxy_set_header        Host            $host;
+proxy_set_header        X-Real-IP       $remote_addr;
+proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+client_max_body_size    10m;
+client_body_buffer_size 128k;
+proxy_connect_timeout   90;
+proxy_send_timeout      90;
+proxy_read_timeout      90;
+proxy_buffers           32 4k;
+</code></pre>
+
+<p>Now let us reload the Nginx configuration :</p>
+
+<pre><code>nginx -s reload
+</code></pre>
+
+<p>CGI scripts should be now transparently proxied to and executed by thttpd
+running on port 8000.</p>
+</div>
+If you find this article helpful, please consider <a href="/donate/">making a donation</a>.
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Soumik Ghosh</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-04-22T05:42:23+00:00" pubdate data-updated="true">Apr 22<span>nd</span>, 2011</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/category/server-configuration/'>Server Configuration</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://soumikgh.github.com/nginxlibrary/running-cgi-scripts-using-thttpd/" data-via="" data-counturl="http://soumikgh.github.com/nginxlibrary/running-cgi-scripts-using-thttpd/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/nginx-1-0-0-stable-has-been-released/" title="Previous Post: Nginx 1.0.0 stable has been released">&laquo; Nginx 1.0.0 stable has been released</a>
+      
+      
+        <a class="basic-alignment right" href="/ip-based-country-blocking/" title="Next Post: IP based country blocking">IP based country blocking &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Categories</h1>
+  <ul id="categories">
+  	<li><a href="/category/server-configuration/">Server Configuration</a></li>
+  	<li><a href="/category/general-configuration/">General Configuration</a></li>
+	<li><a href="/category/application-specific-configuration/">Application-specific Configuration</a></li>
+  	<li><a href="/category/new-releases/">New Releases</a></li>
+        <li><a href="/category/general/">General</a></li>
+  </ul>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/xenforo-configuration/">Nginx configuration for XenForo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/phpbb-configuration/">Nginx configuration for phpBB</a>
+      </li>
+    
+      <li class="post">
+        <a href="/403-forbidden-error/">Resolving "403 Forbidden" error</a>
+      </li>
+    
+      <li class="post">
+        <a href="/using-cloudflare-for-country-blocking/">Using CloudFlare for country blocking</a>
+      </li>
+    
+      <li class="post">
+        <a href="/nginx-1-0-11-has-been-released/">Nginx 1.0.11 has been released</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+<section class="googleplus googleplus-hidden">
+  <h1>
+    <a href="https://plus.google.com/109437240070931117441?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Soumik Ghosh -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'nginxlibrary';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://soumikgh.github.com/nginxlibrary/running-cgi-scripts-using-thttpd/';
+        var disqus_url = 'http://soumikgh.github.com/nginxlibrary/running-cgi-scripts-using-thttpd/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+<script type="text/javascript">
+var sc_project=6240294;
+var sc_invisible=1;
+var sc_security="4ec3a4e1";
+</script>
+
+<script type="text/javascript"
+src="http://www.statcounter.com/counter/counter.js"></script>
+<noscript><div class="s"><img
+class="s"
+src="http://c.statcounter.com/6240294/0/4ec3a4e1/1/"
+alt="" /></div></noscript>
+
+
+
+</body>
+</html>

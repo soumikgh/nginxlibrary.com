@@ -1,0 +1,365 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Using CloudFlare for country blocking - Nginx Library</title>
+  <meta name="author" content="Soumik Ghosh">
+
+  
+  <!-- <meta name="description" content="Using CloudFlare for country blocking Dec 29th, 2011 CloudFlare is an innovative service, providing
+webmasters with a CDN (Content Delivery Network &hellip;"> -->
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://soumikgh.github.com/nginxlibrary/using-cloudflare-for-country-blocking/" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link rel="icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Nginx Library" type="application/atom+xml" />
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+<!-- Piwik --> 
+<script type="text/javascript">
+var pkBaseURL = (("https:" == document.location.protocol) ? "https://hosted-oswa.org/piwik/" : "http://hosted-oswa.org/piwik/");
+
+document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script type="text/javascript">
+try {
+var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 3);
+piwikTracker.trackPageView();
+piwikTracker.enableLinkTracking();
+} catch( err ) {}
+</script><noscript><p><img src="http://hosted-oswa.org/piwik/piwik.php?idsite=3" style="border:0" alt="" /></p></noscript>
+
+<!-- End Piwik Tracking Code -->
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Nginx Library</a></h1>
+  
+    <h2>A repository of Nginx-related articles</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:soumikgh.github.com/nginxlibrary" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/about/">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Using CloudFlare for country blocking</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-12-29T06:10:59+00:00" pubdate data-updated="true">Dec 29<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><img class="right" src="http://nginxlibrary.com/images/post-images/2011/cloudflare-logo.png" width="244" height="40"></p>
+
+<p><a href="https://www.cloudflare.com/" title="CloudFlare">CloudFlare</a> is an innovative service, providing
+webmasters with a CDN (Content Delivery Network) and <a href="https://www.cloudflare.com/overview" title="CloudFlare features overview">many other things</a>.
+Among these other things, it provides an IP geolocation service using which we
+can use to redirect/block visitors from specific countries.</p>
+
+<p>We need to first enable &#8216;IP Geolocation&#8217; in the CloudFlare settings for this
+to work -</p>
+
+<p><a href="http://nginxlibrary.com/images/post-images/2011/ip_geolocation.jpg"><img src="http://nginxlibrary.com/images/post-images/2011/ip_geolocation.jpg" title="IP geolocation" alt="IP geolocation" /></a></p>
+
+<p>We also need to make sure that the A record for the domain/sub domain is being
+proxied though the CloudFlare proxy. So, enable CloudFlare for the relevant A
+record from the DNS settings if it hasn&#8217;t been set accordingly.</p>
+
+<p>If everything is done properly, the HTTP_CF_IPCOUNTRY environment variable
+should contain the country code for the visitor. To test it, we can write a
+small script in Perl.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='perl'><span class='line'><span class="c1">#!/usr/bin/perl</span>
+</span><span class='line'><span class="k">print</span> <span class="s">&quot;Content-type: text/html\n\n$ENV{&#39;HTTP_CF_IPCOUNTRY&#39;}&quot;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Run the script and it should show you your country code. A list of country
+codes can be found <a href="http://www.maxmind.com/app/iso3166">here</a>.</p>
+
+<p>Now, we need to take care of the Nginx configuration. We need to map the
+environment variable to a variable of our own, so that the value of our
+variable changes depending on whether we want to allow visitors from the
+country or not.</p>
+
+<p>We need to put the following code inside the http block but outside the server
+block for your website. It can be put in <code>/etc/nginx/nginx.conf</code> inside the
+HTTP block or in your vhosts file, outside of the server block.</p>
+
+<pre><code>map $http_cf_ipcountry $allow {
+        default yes;
+        CN no;
+        MX no;
+        NO no;
+}
+</code></pre>
+
+<p>This sets <code>$allow</code> to yes or no, depending on the country of the visitor.
+Here, we are setting the variable to no if the visitor is from China, Mexico,
+or Norway. We can also set the default to no, and allow countries one by one
+if we need to allow only a few countries and block all others. Now that the
+variable is set, we need to instruct Nginx to serve a 403 page to the visitors
+from the blocked countries. Add this anywhere inside the server block :</p>
+
+<pre><code>if ($allow = no) {
+    return 403;
+}
+</code></pre>
+
+<p>This will make Nginx return a 403 Forbidden HTTP status code. A custom 403
+error page can also be defined to make the error page more helpful.</p>
+
+<p>If you are not using CloudFlare, you can still block visitors by country <a href="http://nginxlibrary.com/ip-based-country-blocking/">using the GeoIP module</a>.</p>
+</div>
+If you find this article helpful, please consider <a href="/donate/">making a donation</a>.
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Soumik Ghosh</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-12-29T06:10:59+00:00" pubdate data-updated="true">Dec 29<span>th</span>, 2011</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/category/general-configuration/'>General Configuration</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://soumikgh.github.com/nginxlibrary/using-cloudflare-for-country-blocking/" data-via="" data-counturl="http://soumikgh.github.com/nginxlibrary/using-cloudflare-for-country-blocking/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/nginx-1-0-11-has-been-released/" title="Previous Post: Nginx 1.0.11 has been released">&laquo; Nginx 1.0.11 has been released</a>
+      
+      
+        <a class="basic-alignment right" href="/403-forbidden-error/" title="Next Post: Resolving "403 Forbidden" error">Resolving "403 Forbidden" error &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Categories</h1>
+  <ul id="categories">
+  	<li><a href="/category/server-configuration/">Server Configuration</a></li>
+  	<li><a href="/category/general-configuration/">General Configuration</a></li>
+	<li><a href="/category/application-specific-configuration/">Application-specific Configuration</a></li>
+  	<li><a href="/category/new-releases/">New Releases</a></li>
+        <li><a href="/category/general/">General</a></li>
+  </ul>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/xenforo-configuration/">Nginx configuration for XenForo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/phpbb-configuration/">Nginx configuration for phpBB</a>
+      </li>
+    
+      <li class="post">
+        <a href="/403-forbidden-error/">Resolving "403 Forbidden" error</a>
+      </li>
+    
+      <li class="post">
+        <a href="/using-cloudflare-for-country-blocking/">Using CloudFlare for country blocking</a>
+      </li>
+    
+      <li class="post">
+        <a href="/nginx-1-0-11-has-been-released/">Nginx 1.0.11 has been released</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+<section class="googleplus googleplus-hidden">
+  <h1>
+    <a href="https://plus.google.com/109437240070931117441?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Soumik Ghosh -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'nginxlibrary';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://soumikgh.github.com/nginxlibrary/using-cloudflare-for-country-blocking/';
+        var disqus_url = 'http://soumikgh.github.com/nginxlibrary/using-cloudflare-for-country-blocking/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+<script type="text/javascript">
+var sc_project=6240294;
+var sc_invisible=1;
+var sc_security="4ec3a4e1";
+</script>
+
+<script type="text/javascript"
+src="http://www.statcounter.com/counter/counter.js"></script>
+<noscript><div class="s"><img
+class="s"
+src="http://c.statcounter.com/6240294/0/4ec3a4e1/1/"
+alt="" /></div></noscript>
+
+
+
+</body>
+</html>

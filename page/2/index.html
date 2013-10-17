@@ -1,0 +1,902 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Nginx Library</title>
+  <meta name="author" content="Soumik Ghosh">
+
+  
+  <!-- <meta name="description" content="Hotlinked files can be a major cause for bandwidth leeching for some sites.
+Here&#8217;s how you can hotlink protect your images and other file types &hellip;"> -->
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://soumikgh.github.com/nginxlibrary/page/2/" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link rel="icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Nginx Library" type="application/atom+xml" />
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+<!-- Piwik --> 
+<script type="text/javascript">
+var pkBaseURL = (("https:" == document.location.protocol) ? "https://hosted-oswa.org/piwik/" : "http://hosted-oswa.org/piwik/");
+
+document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script type="text/javascript">
+try {
+var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 3);
+piwikTracker.trackPageView();
+piwikTracker.enableLinkTracking();
+} catch( err ) {}
+</script><noscript><p><img src="http://hosted-oswa.org/piwik/piwik.php?idsite=3" style="border:0" alt="" /></p></noscript>
+
+<!-- End Piwik Tracking Code -->
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Nginx Library</a></h1>
+  
+    <h2>A repository of Nginx-related articles</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:soumikgh.github.com/nginxlibrary" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/about/">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/hotlink-protection/">Hotlink protection in Nginx</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-08-19T02:30:57+00:00" pubdate data-updated="true">Aug 19<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Hotlinked files can be a major cause for bandwidth leeching for some sites.
+Here&#8217;s how you can hotlink protect your images and other file types using a
+simple location directive in your Nginx configuration file :</p>
+
+<pre><code>location ~ \.(jpe?g|png|gif)$ {
+     valid_referers none blocked mysite.com *.mysite.com;
+     if ($invalid_referer) {
+        return   403;
+    }
+}
+</code></pre>
+
+<p>Use the pipe (&#8220;|&#8221;) to separate file extensions you want to hotlink protect.</p>
+
+<p>The <code>valid_referers</code> directive contains the list of site for whom hotlinking
+is allowed. Here is an explanation of the parameters for the <code>valid_referers</code>
+directive :</p>
+
+<ul>
+<li>none - Matches the requests with no Referrer header.</li>
+<li>blocked - Matches the requests with blocked Referrer header.</li>
+<li>*.mydomain.com - Matches all the sub domains of mydomain.com. Since v0.5.33, * wildcards can be used in the server names.</li>
+</ul>
+
+
+<p>You can also tweak the location directive for blocking files from a specific
+directory. Like this :</p>
+
+<pre><code>location /images/ {
+     valid_referers none blocked mysite.com *.mysite.com;
+     if ($invalid_referer) {
+        return   403;
+    }
+}
+</code></pre>
+
+<p>This will hotlink protect every file in any images directory.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/hide-nginx-version/">Hide Nginx version</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-07-30T01:58:11+00:00" pubdate data-updated="true">Jul 30<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>If you are using an old version of Nginx or if you want to explicitly hide the Nginx version in your HTTP headers and your default error pages, you can use the <code>server_tokens</code> directive in your Nginx configuration. The server_tokens directive can be used either in the http, server or location block.</p>
+
+<p>Just set <code>server_tokens</code> to <code>off</code> (it is set to <code>on</code> by default) to hide your Nginx version in all externally visible places.</p>
+
+<pre><code>server_tokens off;
+</code></pre>
+
+<p>Just like using Apache&#8217;s ServerSignature and ServerTokens directive, your Nginx version should now be hidden in the server signature and the default error pages. To check the server headers, use the <a href="http://www.webconfs.com/http-header-check.php" title="HTTP Header Checker">HTTP Header Checker utility</a> from Webconfs.com.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/check-nginx-version/">Check Nginx version</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-07-24T07:14:21+00:00" pubdate data-updated="true">Jul 24<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>We can retrieve the version of Nginx currently installed by calling the Nginx
+binary with some command-line parameters. We can use the <strong>-v</strong> parameter to
+display the Nginx version only, or use the <strong>-V</strong> parameter to display the
+version, along with the compiler version and configuration parameters.</p>
+
+<p>Example outputs :</p>
+
+<pre><code>$ nginx -v
+nginx version: nginx/0.8.54
+
+$ nginx -V
+nginx version: nginx/0.8.54
+TLS SNI support enabled
+configure arguments: --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-client-body-temp-path=/var/lib/nginx/body --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --http-log-path=/var/log/nginx/access.log --http-proxy-temp-path=/var/lib/nginx/proxy --http-scgi-temp-path=/var/lib/nginx/scgi --http-uwsgi-temp-path=/var/lib/nginx/uwsgi --lock-path=/var/lock/nginx.lock --pid-path=/var/run/nginx.pid --with-debug --with-http_addition_module --with-http_dav_module --with-http_geoip_module --with-http_gzip_static_module --with-http_image_filter_module --with-http_realip_module --with-http_stub_status_module --with-http_ssl_module --with-http_sub_module --with-http_xslt_module --with-ipv6 --with-sha1=/usr/include/openssl --with-md5=/usr/include/openssl --with-mail --with-mail_ssl_module --add-module=/build/buildd/nginx-0.8.54/debian/modules/nginx-upstream-fair
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/nginx-1-0-5-has-been-released/">Nginx 1.0.5 has been released</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-07-19T06:42:10+00:00" pubdate data-updated="true">Jul 19<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Nginx 1.0.5 has been released.</p>
+
+<p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
+
+<p><a href="http://forum.nginx.org/read.php?27,212624">The changes</a> include :</p>
+
+<ul>
+<li>Change: now default SSL ciphers are &#8220;HIGH:!aNULL:!MD5&#8221;. Thanks to Rob Stradling.</li>
+<li>Feature: the &#8220;referer_hash_max_size&#8221; and &#8220;referer_hash_bucket_size&#8221; directives. Thanks to Witold Filipczyk.</li>
+<li>Feature: $uid_reset variable.</li>
+<li>Bugfix: a segmentation fault might occur in a worker process, if a caching was used. Thanks to Lanshun Zhou.</li>
+<li>Bugfix: worker processes may got caught in an endless loop during reconfiguration, if a caching was used; the bug had appeared in 0.8.48. Thanks to Maxim Dounin.</li>
+<li>Bugfix: &#8220;stalled cache updating&#8221; alert. Thanks to Maxim Dounin.</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/php-fastcgi/">Setting up PHP FastCGI</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-07-07T04:20:54+00:00" pubdate data-updated="true">Jul 7<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>In a previous post, we had written about setting up Perl-FastCGI on Nginx.
+This article is about setting up PHP-FastCGI. As always, this article assumes
+that you are running on Debian Squeeze (or above) and uses aptitude/apt-get
+for fetching and installing packages.</p>
+
+<p>Install these packages :</p>
+
+<pre><code>apt-get install nginx php5-cgi
+</code></pre>
+
+<p>We&#8217;ll now replace Nginx&#8217;s package maintainer&#8217;s vhosts file with our own.</p>
+
+<pre><code>mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.old
+vi /etc/nginx/sites-available/default
+</code></pre>
+
+<p>Put this in the file :</p>
+
+<pre><code>server {
+    listen   [::]:80;
+    server_name  example.com; # Replace this with your own
+    root   /var/www/example.com;
+    index  index.html index.htm index.php;
+    access_log  /var/www/logs/example.com.access.log;  
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_pass   unix:/tmp/php.socket;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }   
+}
+</code></pre>
+
+<p>Now, there are some tutorials on the internet which wrongly configure Nginx and introduce an arbitrary code execution bug. Note that Nginx passes a request to the php-cgi daemon if the <code>REQUEST_URI</code> has a trailing <code>.php</code>. It does not check whether the file exists or not. Suppose a request is made for <code>/images/dog.jpg/test.php</code>. Nginx will match the trailing <code>.php</code> and pass the request to php-cgi. Now, if test.php does not exist and <code>cgi.fix_pathinfo</code> is set to 1, php-cgi will  try to execute <code>/images/dog.jpg</code> with <code>/test.php</code> as pathinfo. This is especially dangerous if you have a public upload directory. In our configuration, this will not happen even if <code>cgi.fix_pathinfo</code> is set to 1. The <code>try_files $uri =404;</code> line checks for the existence of the .php file and returns a 404 response header if it does not exist. Alternatively, <code>cgi.fix_pathinfo</code> can be set to 0, but is is not required as our configuration takes care of it.</p>
+
+<p>Now we&#8217;ll use a Debian init script to control the php-cgi daemon which will be
+running on port 9000.</p>
+
+<pre><code>vi /etc/init.d/php-fcgi
+</code></pre>
+
+<p>Add this in the file :</p>
+
+<pre><code>#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          php-cgi
+# Required-Start:    networking
+# Required-Stop:     networking
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start the PHP FastCGI daemon.
+### END INIT INFO  
+BIND=/tmp/php.socket
+USER=www-data
+PHP_FCGI_CHILDREN=2
+PHP_FCGI_MAX_REQUESTS=5000  
+PHP_CGI=/usr/bin/php-cgi
+PHP_CGI_NAME=`basename $PHP_CGI`
+PHP_CGI_ARGS="- USER=$USER PATH=/usr/bin PHP_FCGI_CHILDREN=$PHP_FCGI_CHILDREN PHP_FCGI_MAX_REQUESTS=$PHP_FCGI_MAX_REQUESTS $PHP_CGI -b $BIND"
+RETVAL=0  
+start() {
+      echo -n "Starting PHP FastCGI: "
+      start-stop-daemon --quiet --start --background --chuid "$USER" --exec /usr/bin/env -- $PHP_CGI_ARGS
+      RETVAL=$?
+      echo "$PHP_CGI_NAME."
+}
+stop() {
+      echo -n "Stopping PHP FastCGI: "
+      killall -q -w -u $USER $PHP_CGI
+      RETVAL=$?
+      echo "$PHP_CGI_NAME."
+}  
+case "$1" in
+    start)
+      start
+  ;;
+    stop)
+      stop
+  ;;
+    restart)
+      stop
+      start
+  ;;
+    *)
+      echo "Usage: php-fcgi {start|stop|restart}"
+      exit 1
+  ;;
+esac
+exit $RETVAL
+</code></pre>
+
+<p>This can also be done in one line if you have shell access on your server :</p>
+
+<pre><code>wget http://nginxlibrary.com/downloads/php-fcgi/php-fcgi -O /etc/init.d/php-fcgi
+</code></pre>
+
+<p>Give the file executable permissions and make it start during booting :</p>
+
+<pre><code>chmod +x /etc/init.d/php-fcgi &amp;&amp; insserv php-fcgi
+</code></pre>
+
+<p>Finally, start the fastcgi daemon :</p>
+
+<pre><code>invoke-rc.d php-fcgi start
+</code></pre>
+
+<p>To check that it is working properly, create this file :</p>
+
+<pre><code>vi /var/www/example.com/info.php
+</code></pre>
+
+<p>Put this in it :</p>
+
+<pre><code>&lt;?php phpinfo(); ?&gt;
+</code></pre>
+
+<p>Now go to <code>http://example.com/info.php</code> and you&#8217;ll get the PHP information
+page showing information about the loaded modules.</p>
+
+<p>Now, there are a couple of options you can change in the PHP-FastCGI init
+script, namely, <code>PHP_FCGI_CHILDREN</code> and <code>PHP_FCGI_MAX_REQUESTS</code>.
+<code>PHP_FCGI_CHILDREN</code> specifies the number of child processes the php-cgi master
+process will spawn. Usually, two, or, even one is sufficient for a medium-
+traffic site. <code>PHP_FCGI_MAX_REQUESTS</code> specifies the number of requests each
+child process will serve before being terminated and respawned.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/debian-latest-nginx/">Installing the latest version of Nginx on Debian</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-06-05T04:32:39+00:00" pubdate data-updated="true">Jun 5<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The Nginx package in the Debian stable repositories can be quite outdated. It
+is often several version behind the latest, whereas the Nginx package from the
+testing/unstable repositories is updated frequently with newer versions of
+Nginx. We can use apt-pinning to get the a newer version of Nginx (the one
+present in the testing/unstable repositories) and it&#8217;s dependencies (if
+required) will be met from the testing/unstable repositories as well.</p>
+
+<p>Let us first add the testing/unstable repositories to the software sources
+list.</p>
+
+<pre><code>vi /etc/apt/sources.list
+</code></pre>
+
+<p>Add these lines at the end of the file :</p>
+
+<pre><code>deb http://ftp.debian.org/debian/ testing main contrib non-free
+deb-src http://ftp.debian.org/debian/ testing main contrib non-free
+</code></pre>
+
+<p>Replace <code>testing</code> with <code>unstable</code> if you want to add the unstable repositories
+instead of testing.</p>
+
+<p>Now we need to pin the nginx package in testing/unstable to a higher priority
+so that it gets selected. Actually, in Debian, nginx is a meta-package that
+selects the <a href="http://packages.debian.org/testing/nginx-full">nginx-full</a> package. So, if you want to use <a href="http://packages.debian.org/testing/nginx-light">nginx-light</a>
+or <a href="http://packages.debian.org/testing/nginx-extras">nginx-extras</a>, use them instead of just &#8220;nginx&#8221;.</p>
+
+<pre><code>vi /etc/apt/preferences
+</code></pre>
+
+<p>Add these lines :</p>
+
+<pre><code>Package: nginx
+Pin: release a=testing
+Pin-Priority: 900
+</code></pre>
+
+<p>As explained before, you can use nginx-light or nginx-extra instead of nginx
+here. You can also use unstable instead of testing.</p>
+
+<p>Now, run :</p>
+
+<pre><code>apt-get update
+</code></pre>
+
+<p>Check whether the newer version of nginx is selected for install by running :</p>
+
+<pre><code>apt-cache policy nginx
+</code></pre>
+
+<p>Finally, install/upgrade nginx by running :</p>
+
+<pre><code>apt-get install nginx
+</code></pre>
+
+<p>or</p>
+
+<pre><code>apt-get upgrade nginx
+</code></pre>
+
+<p>You&#8217;ll have a relatively newer version of Nginx installed after finishing
+this.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/nginx-1-0-4-has-been-released/">Nginx 1.0.4 has been released</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-06-01T06:40:52+00:00" pubdate data-updated="true">Jun 1<span>st</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Nginx 1.0.4 has been released.</p>
+
+<p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
+
+<p><a href="http://forum.nginx.org/read.php?2,202918,207036">The changes</a> include :</p>
+
+<ul>
+<li>Change: now regular expressions case sensitivity in the &#8220;map&#8221; directive is given by prefixes &#8220;~&#8221; or &#8220;~*&#8221;.</li>
+<li>Feature: now shared zones and caches use POSIX semaphores on Linux. Thanks to Denis F. Latypoff.</li>
+<li>Bugfix: &#8220;stalled&#8221; cache updating&#8221; alert.</li>
+<li>Bugfix: nginx could not be built &#8211;without-http_auth_basic_module; the bug had appeared in 1.0.3.</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/nginx-1-0-3-has-been-released/">Nginx 1.0.3 has been released</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-05-25T06:42:04+00:00" pubdate data-updated="true">May 25<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Nginx 1.0.3 has been released.</p>
+
+<p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
+
+<p><a href="http://forum.nginx.org/read.php?27,200796,200796">The changes</a> include :</p>
+
+<ul>
+<li><p>Feature: the &#8220;auth_basic_user_file&#8221; directive supports &#8220;$apr1&#8221;, &#8220;{PLAIN}&#8221;, and &#8220;{SSHA}&#8221; password encryption methods. Thanks to Maxim Dounin.</p></li>
+<li><p>Feature: the &#8220;geoip_org&#8221; directive and $geoip_org variable. Thanks to Alexander Uskov, Arnaud Granal, and Denis F. Latypoff.</p></li>
+<li><p>Feature: ngx_http_geo_module and ngx_http_geoip_module support IPv4 addresses mapped to IPv6 addresses.</p></li>
+<li><p>Bugfix: a segmentation fault occurred in a worker process during testing IPv4 address mapped to IPv6 address, if access or deny rules were defined only for IPv6; the bug had appeared in 0.8.22.</p></li>
+<li><p>Bugfix: a cached reponse may be broken if proxy/fastcgi/scgi/ uwsgi_cache_bypass and proxy/fastcgi/scgi/uwsgi_no_cache directive values were different; the bug had appeared in 0.8.46.</p></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/converting-phpbbs-default-htaccess-for-nginx/">Converting phpBB&#8217;s default .htaccess for nginx</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-05-11T11:50:53+00:00" pubdate data-updated="true">May 11<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>phpBB ships with a small .htaccess file in the root that has rules to
+deny access to the config.php and common.php files in the absence of a PHP
+interpreter. I&#8217;ll duplicate those rules for an Nginx configuration.</p>
+
+<p>Here&#8217;s how the .htaccess file looks like :</p>
+
+<pre><code>Order Allow,Deny
+Deny from All
+
+Order Allow,Deny
+Deny from All
+</code></pre>
+
+<p>And here&#8217;s what you need to add to your Nginx configuration file in order to
+duplicate that behaviour :</p>
+
+<pre><code>location ~ /config.php|/common.php {
+    deny all;
+}
+</code></pre>
+
+<p>This will deny access to all instances of config/common.php located in the
+document root, regardless of where they are located.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/nginx-1-0-2-has-been-released/">Nginx 1.0.2 has been released</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-05-11T00:57:13+00:00" pubdate data-updated="true">May 11<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Nginx 1.0.2 has been released.</p>
+
+<p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
+
+<p><a href="http://forum.nginx.org/read.php?27,196950,196950">The changes</a> include :</p>
+
+<ul>
+<li>Feature: now shared zones and caches use POSIX semaphores.</li>
+<li>Bugfix: in the &#8220;rotate&#8221; parameter of the &#8220;image_filter&#8221; directive. Thanks to Adam Bocim.</li>
+<li>Bugfix: nginx could not be built on Solaris; the bug had appeared in 1.0.1.</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/page/3/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Categories</h1>
+  <ul id="categories">
+  	<li><a href="/category/server-configuration/">Server Configuration</a></li>
+  	<li><a href="/category/general-configuration/">General Configuration</a></li>
+	<li><a href="/category/application-specific-configuration/">Application-specific Configuration</a></li>
+  	<li><a href="/category/new-releases/">New Releases</a></li>
+        <li><a href="/category/general/">General</a></li>
+  </ul>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/xenforo-configuration/">Nginx configuration for XenForo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/phpbb-configuration/">Nginx configuration for phpBB</a>
+      </li>
+    
+      <li class="post">
+        <a href="/403-forbidden-error/">Resolving &#8220;403 Forbidden&#8221; error</a>
+      </li>
+    
+      <li class="post">
+        <a href="/using-cloudflare-for-country-blocking/">Using CloudFlare for country blocking</a>
+      </li>
+    
+      <li class="post">
+        <a href="/nginx-1-0-11-has-been-released/">Nginx 1.0.11 has been released</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+<section class="googleplus googleplus-hidden">
+  <h1>
+    <a href="https://plus.google.com/109437240070931117441?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Soumik Ghosh -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'nginxlibrary';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+<script type="text/javascript">
+var sc_project=6240294;
+var sc_invisible=1;
+var sc_security="4ec3a4e1";
+</script>
+
+<script type="text/javascript"
+src="http://www.statcounter.com/counter/counter.js"></script>
+<noscript><div class="s"><img
+class="s"
+src="http://c.statcounter.com/6240294/0/4ec3a4e1/1/"
+alt="" /></div></noscript>
+
+
+
+</body>
+</html>

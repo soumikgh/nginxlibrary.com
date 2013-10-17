@@ -1,0 +1,963 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Nginx Library</title>
+  <meta name="author" content="Soumik Ghosh">
+
+  
+  <!-- <meta name="description" content="Nginx 1.0.1 version has been released. Download it : http://nginx.org/en/download.html The changes include: Change: now the &#8220;split_clients&# &hellip;"> -->
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://soumikgh.github.com/nginxlibrary/page/3/" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link rel="icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Nginx Library" type="application/atom+xml" />
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+<!-- Piwik --> 
+<script type="text/javascript">
+var pkBaseURL = (("https:" == document.location.protocol) ? "https://hosted-oswa.org/piwik/" : "http://hosted-oswa.org/piwik/");
+
+document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script type="text/javascript">
+try {
+var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 3);
+piwikTracker.trackPageView();
+piwikTracker.enableLinkTracking();
+} catch( err ) {}
+</script><noscript><p><img src="http://hosted-oswa.org/piwik/piwik.php?idsite=3" style="border:0" alt="" /></p></noscript>
+
+<!-- End Piwik Tracking Code -->
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Nginx Library</a></h1>
+  
+    <h2>A repository of Nginx-related articles</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:soumikgh.github.com/nginxlibrary" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/about/">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/nginx-1-0-1-version-has-been-released/">Nginx 1.0.1 version has been released</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-05-03T13:16:44+00:00" pubdate data-updated="true">May 3<span>rd</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Nginx 1.0.1 version has been released.</p>
+
+<p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
+
+<p><a href="http://forum.nginx.org/read.php?27,195215,195215">The changes</a> include:</p>
+
+<ul>
+<li>Change: now the &#8220;split_clients&#8221; directive uses MurmurHash2 algorithm because of better distribution. Thanks to Oleg Mamontov.</li>
+<li>Change: now long strings starting with zero are not considered as false values. Thanks to Maxim Dounin.</li>
+<li>Change: now nginx uses a default listen backlog value 511 on Linux.</li>
+<li>Feature: the $upstream_&#8230; variables may be used in the SSI and perl modules.</li>
+<li>Bugfix: now nginx limits better disk cache size. Thanks to Oleg Mamontov.</li>
+<li>Bugfix: a segmentation fault might occur while parsing incorrect IPv4 address; the bug had appeared in 0.9.3. Thanks to Maxim Dounin.</li>
+<li>Bugfix: nginx could not be built by gcc 4.6 without &#8211;with-debug option.</li>
+<li>Bugfix: nginx could not be built on Solaris 9 and earlier; the bug had appeared in 0.9.3. Thanks to Dagobert Michelsen.</li>
+<li>Bugfix: $request_time variable had invalid values if subrequests were used; the bug had appeared in 0.8.47. Thanks to Igor A. Valcov.</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/ip-based-country-blocking/">IP based country blocking</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-04-27T12:20:35+00:00" pubdate data-updated="true">Apr 27<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>To block visitors from a specific country (or countries) using the IP
+addresses, Nginx needs to be compiled with the <a href="http://wiki.nginx.org/NginxHttpGeoIPModule">GeoIP module</a>. This module
+was introduced in v0.7.63 and 0.8.6. In addition to that you need a Geo
+database. Install these packages under Debian :</p>
+
+<pre><code>apt-get install geoip-database libgeoip1
+</code></pre>
+
+<p>We now need to edit the configuration files. Put this code in the <code>http</code> block
+in <code>/etc/nginx/nginx.conf</code>. It can be also put in your vhosts config file
+outside of the <code>server</code> block.</p>
+
+<pre><code>geoip_country /usr/share/GeoIP/GeoIP.dat;
+map $geoip_country_code $allow_visit {
+    default yes;
+    EG no;
+    FR no;
+    FI no;
+}
+</code></pre>
+
+<p>This code sets the variable <code>$allow_visit</code> to yes or no, depending on the
+country of the visitor. In this example, we have set <code>$allow_visit</code> to no for
+Egypt, France and Finland, and yes for all other countries. Alternately, if
+you want to block all countries except for a few, set the default to no and
+set the variable to yes for a select few. A list of country codes can be found
+<a href="http://www.maxmind.com/app/iso3166">here</a>.</p>
+
+<p>Now we need to use the <code>$allow_visit</code> variable to block visitors. Inside your
+server block, add this :</p>
+
+<pre><code>if ($allow_visit = no) {
+    return 403;
+}
+</code></pre>
+
+<p>This will return the &#8220;403 Forbidden&#8221; page for all visitors from countries
+whose country code is set to no. You can also define a custom 403 page which
+is a bit more helpful than the default one.</p>
+
+<pre><code>error_page 403 /custom_403.html;
+</code></pre>
+
+<p>It is also possible to use this for redirecting users based on their country,
+but that&#8217;ll be explored in another post.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/running-cgi-scripts-using-thttpd/">Running CGI scripts using thttpd</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-04-22T05:42:23+00:00" pubdate data-updated="true">Apr 22<span>nd</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Nginx cannot run CGI scripts natively. You have to either use the <a href="http://www.nginxlibrary.com/perl-fastcgi/" title="Setting up Perl FastCGI with Nginx">Perl-FastCGI daemon</a> to run your Perl scripts, or for a more &#8220;native&#8221; CGI
+environment, proxy the CGI scripts to a web-server that has the ability to
+execute them natively. Apache, surely, will be overkill for this purpose.
+Keeping in mind the low-memory requirements of most users who run Nginx, we&#8217;ll
+use thttpd. <a href="http://www.acme.com/software/thttpd/" title="thttpd home page">thttpd</a> is a tiny, lightweight server (only around 800 kB RSS)
+which has the ability to execute CGI scripts natively.</p>
+
+<p>First, let us install thttpd. thttpd hasn&#8217;t been in active development since
+late 2003 (v2.25b), but there isn&#8217;t any security issue with it. The only issue
+is that it doesn&#8217;t respect (or pass on) the <a href="http://en.wikipedia.org/wiki/X-Forwarded-For">X-Forwarded-For</a> header. So,
+if you are using Debian 5.0.X Lenny, please build from source after applying
+<a href="http://wiki.nginx.org/index.php?title=ThttpdRealIP&amp;action=raw&amp;anchor=thttpd.patch">this patch</a> or install from the Squeeze repositories using <a href="http://jaqque.sbih.org/kplug/apt-pinning.html" title="Apt-Pinning">apt-pinning</a> (This issue was fixed in <a href="http://packages.debian.org/changelogs/pool/main/t/thttpd/thttpd_2.25b-11/changelog#versionversion2.25b-10">v2.25b-10</a>) .</p>
+
+<p>Assuming you are using Debian Squeeze,</p>
+
+<pre><code>apt-get install thttpd
+</code></pre>
+
+<p>Replace the thttpd configuration file with our own :</p>
+
+<pre><code>mv /etc/thttpd/thttpd.conf /etc/thttpd/thttpd.conf.orig
+vi /etc/thttpd/thttpd.conf
+</code></pre>
+
+<p>Put this in the file :</p>
+
+<pre><code>host=127.0.0.1
+port=8000
+dir=/var/www  #change this to the $document_root from nginx config file
+user=www-data
+cgipat=**.cgi|**.pl
+logfile=/var/log/thttpd.log
+pidfile=/var/run/thttpd.pid
+</code></pre>
+
+<p>Now let us start thttpd.</p>
+
+<pre><code>invoke-rc.d thttpd start
+</code></pre>
+
+<p>We also need to configure nginx to pass on the requests for CGI scripts to
+thttpd. Add this to your configuration file :</p>
+
+<pre><code>location ~ \.cgi|pl$ {
+     proxy_pass   http://127.0.0.1:8000;
+     include proxy.conf;
+}
+</code></pre>
+
+<p>We also need to create a file with some configuration parameters for nginx :</p>
+
+<pre><code>vi /etc/nginx/proxy.conf
+</code></pre>
+
+<p>Put this in the file :</p>
+
+<pre><code>proxy_redirect          off;
+proxy_set_header        Host            $host;
+proxy_set_header        X-Real-IP       $remote_addr;
+proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+client_max_body_size    10m;
+client_body_buffer_size 128k;
+proxy_connect_timeout   90;
+proxy_send_timeout      90;
+proxy_read_timeout      90;
+proxy_buffers           32 4k;
+</code></pre>
+
+<p>Now let us reload the Nginx configuration :</p>
+
+<pre><code>nginx -s reload
+</code></pre>
+
+<p>CGI scripts should be now transparently proxied to and executed by thttpd
+running on port 8000.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/nginx-1-0-0-stable-has-been-released/">Nginx 1.0.0 stable has been released</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-04-14T03:45:44+00:00" pubdate data-updated="true">Apr 14<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Nginx 1.0.0 stable version has been released.</p>
+
+<p>Download it : <a href="http://nginx.org/en/download.html">http://nginx.org/en/download.html</a></p>
+
+<p><a href="http://forum.nginx.org/read.php?2,190422,190422#msg-190422">The changes</a> include :</p>
+
+<ul>
+<li>Bugfix: a cache manager might hog CPU after reload. Thanks to Maxim Dounin.</li>
+<li>Bugfix: an &#8220;image_filter crop&#8221; directive worked incorrectly coupled with an &#8220;image_filter rotate 180&#8221; directive.</li>
+<li>Bugfix: a &#8220;satisfy any&#8221; directive disabled custom 401 error page.</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/ubuntu-latest-nginx/">Installing the latest version of Nginx on Ubuntu</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-04-11T14:57:49+00:00" pubdate data-updated="true">Apr 11<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The Nginx release on the Ubuntu repositories is often outdated. Igor pushes
+out new versions of Nginx quite frequently and it&#8217;s understandable that the
+Ubuntu package maintainers do not keep up. Also, Ubuntu only includes major
+version updates with new OS releases. So, if the Nginx development branch
+turns stable, and you plan on staying on your LTS (Long Term Support) version,
+you might not be able to get the newer version of Nginx unless you upgrade
+your OS.</p>
+
+<p>So, in view of all this, <a href="http://profarius.com/">Michael Lustfield</a> and a bunch of other cool
+folks maintain a Launchpad PPA <a href="https://launchpad.net/~nginx">where they provide</a> the latest versions of
+Nginx from both the stable and development branch. To get the latest version
+of Nginx from the PPA, follow these steps :</p>
+
+<pre><code>add-apt-repository ppa:nginx/stable
+apt-get update &amp;&amp; apt-get install nginx
+</code></pre>
+
+<p>Use <code>ppa:nginx/development</code> to get the latest development version.</p>
+
+<p>If you want to do it manually, you&#8217;ll need to edit your sources.list, import
+the appropriate key, and then install/upgrade Nginx.</p>
+
+<pre><code>echo "deb http://ppa.launchpad.net/nginx/stable/ubuntu $(lsb_release -cs) main" &gt;&gt; /etc/apt/sources.list
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C300EE8C
+apt-get update &amp;&amp; apt-get install nginx
+</code></pre>
+
+<p>Here too you can use <code>deb http://ppa.launchpad.net/nginx/development/ubuntu
+$(lsb_release -cs) main</code> to get the latest development version.</p>
+
+<p>You now have the latest version of Nginx on your server. Ubuntu will also
+automatically pull down and install updates for Nginx if they are available.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/perl-fastcgi/">Setting up Perl FastCGI with Nginx</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-02-23T05:09:18+00:00" pubdate data-updated="true">Feb 23<span>rd</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>This article assumes that you are running on Debian Lenny (or above) and uses
+aptitude/apt-get for fetching and installing packages.</p>
+
+<p>Install these packages :</p>
+
+<pre><code>apt-get install nginx libfcgi-perl wget
+</code></pre>
+
+<p>Now we replace Nginx&#8217;s package maintainer&#8217;s vhosts file with our own.</p>
+
+<pre><code>mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.old
+vi /etc/nginx/sites-available/default
+</code></pre>
+
+<p>Put these as the file contents :</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>server {
+</span><span class='line'>  listen   80;
+</span><span class='line'>  server_name  example.com www.example.com;
+</span><span class='line'>  root   /var/www/example.com;
+</span><span class='line'>  access_log  /var/www/logs/example.com.access.log;  
+</span><span class='line'>
+</span><span class='line'>  location / {
+</span><span class='line'>      index  index.html index.htm index.pl;
+</span><span class='line'>  }  
+</span><span class='line'>
+</span><span class='line'>  location ~ \.pl|cgi$ {
+</span><span class='line'>      try_files $uri =404;
+</span><span class='line'>      gzip off;
+</span><span class='line'>      fastcgi_pass  127.0.0.1:8999;
+</span><span class='line'>      fastcgi_index index.pl;
+</span><span class='line'>      fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+</span><span class='line'>      include fastcgi_params;
+</span><span class='line'>      } 
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now let us create the directory where the site will reside and assign proper
+ownership to it.</p>
+
+<pre><code>mkdir /var/www/example.com
+chown -R www-data:www-data /var/www/example.com
+</code></pre>
+
+<p>Next, we should download and configure a FastCGI wrapper script (credit: <a href="http://www.ruby-forum.com/topic/145858#645832">Denis
+S. Filimonov</a>), a Debian init script to start/stop the FastCGI process, give
+them the necessary permissions to be executed and set the init script to start
+up the FastCGI daemon automatically.</p>
+
+<pre><code>wget http://nginxlibrary.com/downloads/perl-fcgi/fastcgi-wrapper -O /usr/bin/fastcgi-wrapper.pl
+wget http://nginxlibrary.com/downloads/perl-fcgi/perl-fcgi -O /etc/init.d/perl-fcgi
+chmod +x /usr/bin/fastcgi-wrapper.pl
+chmod +x /etc/init.d/perl-fcgi
+update-rc.d perl-fcgi defaults
+insserv perl-fcgi
+</code></pre>
+
+<p>Now that everything is done, let us start Nginx and test out a sample Perl
+script.</p>
+
+<pre><code>/etc/init.d/nginx start
+/etc/init.d/perl-fcgi start
+vi /var/www/example.com/index.pl
+</code></pre>
+
+<p>Put the following in the file :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='perl'><span class='line'><span class="c1">#!/usr/bin/perl</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">print</span> <span class="s">&quot;Content-type:text/html\n\n&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">print</span> <span class="s">&lt;&lt;EndOfHTML;</span>
+</span><span class='line'><span class="s">&lt;html&gt;&lt;head&gt;&lt;title&gt;Perl Environment Variables&lt;/title&gt;&lt;/head&gt;</span>
+</span><span class='line'><span class="s">&lt;body&gt;</span>
+</span><span class='line'><span class="s">&lt;h1&gt;Perl Environment Variables&lt;/h1&gt;</span>
+</span><span class='line'><span class="s">EndOfHTML</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">foreach</span> <span class="nv">$key</span> <span class="p">(</span><span class="nb">sort</span><span class="p">(</span><span class="nb">keys</span> <span class="nv">%ENV</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">print</span> <span class="s">&quot;$key = $ENV{$key}&lt;br&gt;\n&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">print</span> <span class="s">&quot;&lt;/body&gt;&lt;/html&gt;&quot;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Let us make the script executable by issuing the following command :</p>
+
+<pre><code>chmod a+x /var/www/example.com/index.pl
+</code></pre>
+
+<p>Now, go to example.com and you&#8217;ll see a list of Perl environment variables if
+everything was done correctly.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/denying-access-to-a-directory/">Denying access to a directory</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2010-11-02T06:02:14+00:00" pubdate data-updated="true">Nov 2<span>nd</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Similar to Apache&#8217;s <code>Deny from all</code>, nginx has the <code>deny all</code> directive.</p>
+
+<p>To deny access to a directory called &#8216;dirdeny&#8217; and return a &#8220;403 Forbidden&#8221;
+header, use this code within your configuration file:</p>
+
+<pre><code>location /dirdeny {
+        deny all;
+        return 403;
+}
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/nginx-0-8-53-stable-version-has-been-released/">nginx-0.8.53 stable version has been released. </a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2010-10-18T14:43:06+00:00" pubdate data-updated="true">Oct 18<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>nginx-0.8.53 stable version has been released. Get it from
+<a href="http://nginx.org/en/download.html">http://nginx.org/en/download.html</a>.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/password-protect-a-directory/">Password protect a directory</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2010-09-06T06:44:11+00:00" pubdate data-updated="true">Sep 6<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Unlike Apache, nginx does not have any .htaccess file. Password protection is
+achieved by using the Nginx HttpAuthBasic module directives in the
+configuration file.</p>
+
+<p>To password protect a directory called <code>secret_folder</code>, use the following
+directives inside the server block in the configuration file for your website.</p>
+
+<pre><code>location ^~ /secret_folder/ {
+auth_basic            "Restricted Area";
+auth_basic_user_file  conf/htpasswd;
+}
+</code></pre>
+
+<p>This will password protect the directory, it&#8217;s sub folders and the files
+inside it. Change auth_basic_user_file directive to point to your htpasswd
+file. If your are using nginx version 0.6.7 or higher, note that the filename
+path is relative to directory of nginx configuration file, <code>nginx.conf</code>,
+rather than nginx prefix directory. So, if your nginx.conf is in <code>/etc/nginx</code>
+folder, the above code will use the htpasswd file in <code>/etc/nginx/conf</code> folder.</p>
+
+<p>Here&#8217;s the format of the htpasswd file :</p>
+
+<pre><code>user:pass
+user2:pass2:comment
+user3:pass3
+</code></pre>
+
+<p>Passwords must be encoded by the crypt(3) function if Apache is not installed.
+If Apache is installed, you can use the htpasswd program to generate the
+htpasswd file:</p>
+
+<pre><code>htpasswd -b htpasswd NewUser NewPassword
+</code></pre>
+
+<p>If you want to use a web based utility to generate your htpasswd file, I&#8217;d
+recommend the excellent <a href="http://www.tools.dynamicdrive.com/password/">.htaccess Password Generator</a> utility from Dynamic
+Drive.</p>
+
+<p>In order to password protect the whole site, use the same code within location
+/ block.</p>
+
+<pre><code>location / {
+........................................
+........................................
+auth_basic            "Restricted Area";
+auth_basic_user_file  conf/htpasswd;
+}
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/enable-directory-listing/">Enable directory listing</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2010-09-06T06:43:53+00:00" pubdate data-updated="true">Sep 6<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Enabling directory listing in a folder in nginx is
+simple enough with just an <code>autoindex on;</code> directive inside the location
+directive. You can also enable sitewide directory listing by putting it in the
+server block or even enable directory access for all sites by putting it in the http block.</p>
+
+<p>An example config file:</p>
+
+<pre><code>server {
+        listen   80;
+        server_name  domain.com www.domain.com;
+        access_log  /var/...........................;
+        root   /path/to/root;
+        location / {
+                index  index.php index.html index.htm;
+        }
+        location /somedir {
+               autoindex on;
+        }
+}
+</code></pre>
+
+<p>A live example can be found <a href="http://animorphsfanforum.com/fanart/2064/">here</a>.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/page/4/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/page/2/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Categories</h1>
+  <ul id="categories">
+  	<li><a href="/category/server-configuration/">Server Configuration</a></li>
+  	<li><a href="/category/general-configuration/">General Configuration</a></li>
+	<li><a href="/category/application-specific-configuration/">Application-specific Configuration</a></li>
+  	<li><a href="/category/new-releases/">New Releases</a></li>
+        <li><a href="/category/general/">General</a></li>
+  </ul>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/xenforo-configuration/">Nginx configuration for XenForo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/phpbb-configuration/">Nginx configuration for phpBB</a>
+      </li>
+    
+      <li class="post">
+        <a href="/403-forbidden-error/">Resolving &#8220;403 Forbidden&#8221; error</a>
+      </li>
+    
+      <li class="post">
+        <a href="/using-cloudflare-for-country-blocking/">Using CloudFlare for country blocking</a>
+      </li>
+    
+      <li class="post">
+        <a href="/nginx-1-0-11-has-been-released/">Nginx 1.0.11 has been released</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+<section class="googleplus googleplus-hidden">
+  <h1>
+    <a href="https://plus.google.com/109437240070931117441?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Soumik Ghosh -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'nginxlibrary';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+<script type="text/javascript">
+var sc_project=6240294;
+var sc_invisible=1;
+var sc_security="4ec3a4e1";
+</script>
+
+<script type="text/javascript"
+src="http://www.statcounter.com/counter/counter.js"></script>
+<noscript><div class="s"><img
+class="s"
+src="http://c.statcounter.com/6240294/0/4ec3a4e1/1/"
+alt="" /></div></noscript>
+
+
+
+</body>
+</html>

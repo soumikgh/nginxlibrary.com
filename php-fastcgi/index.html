@@ -1,0 +1,429 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Setting up PHP FastCGI - Nginx Library</title>
+  <meta name="author" content="Soumik Ghosh">
+
+  
+  <!-- <meta name="description" content="Setting up PHP FastCGI Jul 7th, 2011 In a previous post, we had written about setting up Perl-FastCGI on Nginx.
+This article is about setting up PHP &hellip;"> -->
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://soumikgh.github.com/nginxlibrary/php-fastcgi/" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link rel="icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Nginx Library" type="application/atom+xml" />
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+<!-- Piwik --> 
+<script type="text/javascript">
+var pkBaseURL = (("https:" == document.location.protocol) ? "https://hosted-oswa.org/piwik/" : "http://hosted-oswa.org/piwik/");
+
+document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script type="text/javascript">
+try {
+var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 3);
+piwikTracker.trackPageView();
+piwikTracker.enableLinkTracking();
+} catch( err ) {}
+</script><noscript><p><img src="http://hosted-oswa.org/piwik/piwik.php?idsite=3" style="border:0" alt="" /></p></noscript>
+
+<!-- End Piwik Tracking Code -->
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Nginx Library</a></h1>
+  
+    <h2>A repository of Nginx-related articles</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:soumikgh.github.com/nginxlibrary" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/about/">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Setting up PHP FastCGI</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-07-07T04:20:54+00:00" pubdate data-updated="true">Jul 7<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>In a previous post, we had written about setting up Perl-FastCGI on Nginx.
+This article is about setting up PHP-FastCGI. As always, this article assumes
+that you are running on Debian Squeeze (or above) and uses aptitude/apt-get
+for fetching and installing packages.</p>
+
+<p>Install these packages :</p>
+
+<pre><code>apt-get install nginx php5-cgi
+</code></pre>
+
+<p>We&#8217;ll now replace Nginx&#8217;s package maintainer&#8217;s vhosts file with our own.</p>
+
+<pre><code>mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.old
+vi /etc/nginx/sites-available/default
+</code></pre>
+
+<p>Put this in the file :</p>
+
+<pre><code>server {
+    listen   [::]:80;
+    server_name  example.com; # Replace this with your own
+    root   /var/www/example.com;
+    index  index.html index.htm index.php;
+    access_log  /var/www/logs/example.com.access.log;  
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_pass   unix:/tmp/php.socket;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }   
+}
+</code></pre>
+
+<p>Now, there are some tutorials on the internet which wrongly configure Nginx and introduce an arbitrary code execution bug. Note that Nginx passes a request to the php-cgi daemon if the <code>REQUEST_URI</code> has a trailing <code>.php</code>. It does not check whether the file exists or not. Suppose a request is made for <code>/images/dog.jpg/test.php</code>. Nginx will match the trailing <code>.php</code> and pass the request to php-cgi. Now, if test.php does not exist and <code>cgi.fix_pathinfo</code> is set to 1, php-cgi will  try to execute <code>/images/dog.jpg</code> with <code>/test.php</code> as pathinfo. This is especially dangerous if you have a public upload directory. In our configuration, this will not happen even if <code>cgi.fix_pathinfo</code> is set to 1. The <code>try_files $uri =404;</code> line checks for the existence of the .php file and returns a 404 response header if it does not exist. Alternatively, <code>cgi.fix_pathinfo</code> can be set to 0, but is is not required as our configuration takes care of it.</p>
+
+<p>Now we&#8217;ll use a Debian init script to control the php-cgi daemon which will be
+running on port 9000.</p>
+
+<pre><code>vi /etc/init.d/php-fcgi
+</code></pre>
+
+<p>Add this in the file :</p>
+
+<pre><code>#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          php-cgi
+# Required-Start:    networking
+# Required-Stop:     networking
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start the PHP FastCGI daemon.
+### END INIT INFO  
+BIND=/tmp/php.socket
+USER=www-data
+PHP_FCGI_CHILDREN=2
+PHP_FCGI_MAX_REQUESTS=5000  
+PHP_CGI=/usr/bin/php-cgi
+PHP_CGI_NAME=`basename $PHP_CGI`
+PHP_CGI_ARGS="- USER=$USER PATH=/usr/bin PHP_FCGI_CHILDREN=$PHP_FCGI_CHILDREN PHP_FCGI_MAX_REQUESTS=$PHP_FCGI_MAX_REQUESTS $PHP_CGI -b $BIND"
+RETVAL=0  
+start() {
+      echo -n "Starting PHP FastCGI: "
+      start-stop-daemon --quiet --start --background --chuid "$USER" --exec /usr/bin/env -- $PHP_CGI_ARGS
+      RETVAL=$?
+      echo "$PHP_CGI_NAME."
+}
+stop() {
+      echo -n "Stopping PHP FastCGI: "
+      killall -q -w -u $USER $PHP_CGI
+      RETVAL=$?
+      echo "$PHP_CGI_NAME."
+}  
+case "$1" in
+    start)
+      start
+  ;;
+    stop)
+      stop
+  ;;
+    restart)
+      stop
+      start
+  ;;
+    *)
+      echo "Usage: php-fcgi {start|stop|restart}"
+      exit 1
+  ;;
+esac
+exit $RETVAL
+</code></pre>
+
+<p>This can also be done in one line if you have shell access on your server :</p>
+
+<pre><code>wget http://nginxlibrary.com/downloads/php-fcgi/php-fcgi -O /etc/init.d/php-fcgi
+</code></pre>
+
+<p>Give the file executable permissions and make it start during booting :</p>
+
+<pre><code>chmod +x /etc/init.d/php-fcgi &amp;&amp; insserv php-fcgi
+</code></pre>
+
+<p>Finally, start the fastcgi daemon :</p>
+
+<pre><code>invoke-rc.d php-fcgi start
+</code></pre>
+
+<p>To check that it is working properly, create this file :</p>
+
+<pre><code>vi /var/www/example.com/info.php
+</code></pre>
+
+<p>Put this in it :</p>
+
+<pre><code>&lt;?php phpinfo(); ?&gt;
+</code></pre>
+
+<p>Now go to <code>http://example.com/info.php</code> and you&#8217;ll get the PHP information
+page showing information about the loaded modules.</p>
+
+<p>Now, there are a couple of options you can change in the PHP-FastCGI init
+script, namely, <code>PHP_FCGI_CHILDREN</code> and <code>PHP_FCGI_MAX_REQUESTS</code>.
+<code>PHP_FCGI_CHILDREN</code> specifies the number of child processes the php-cgi master
+process will spawn. Usually, two, or, even one is sufficient for a medium-
+traffic site. <code>PHP_FCGI_MAX_REQUESTS</code> specifies the number of requests each
+child process will serve before being terminated and respawned.</p>
+</div>
+If you find this article helpful, please consider <a href="/donate/">making a donation</a>.
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Soumik Ghosh</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-07-07T04:20:54+00:00" pubdate data-updated="true">Jul 7<span>th</span>, 2011</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/category/server-configuration/'>Server Configuration</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://soumikgh.github.com/nginxlibrary/php-fastcgi/" data-via="" data-counturl="http://soumikgh.github.com/nginxlibrary/php-fastcgi/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/debian-latest-nginx/" title="Previous Post: Installing the latest version of Nginx on Debian">&laquo; Installing the latest version of Nginx on Debian</a>
+      
+      
+        <a class="basic-alignment right" href="/nginx-1-0-5-has-been-released/" title="Next Post: Nginx 1.0.5 has been released">Nginx 1.0.5 has been released &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Categories</h1>
+  <ul id="categories">
+  	<li><a href="/category/server-configuration/">Server Configuration</a></li>
+  	<li><a href="/category/general-configuration/">General Configuration</a></li>
+	<li><a href="/category/application-specific-configuration/">Application-specific Configuration</a></li>
+  	<li><a href="/category/new-releases/">New Releases</a></li>
+        <li><a href="/category/general/">General</a></li>
+  </ul>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/xenforo-configuration/">Nginx configuration for XenForo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/phpbb-configuration/">Nginx configuration for phpBB</a>
+      </li>
+    
+      <li class="post">
+        <a href="/403-forbidden-error/">Resolving "403 Forbidden" error</a>
+      </li>
+    
+      <li class="post">
+        <a href="/using-cloudflare-for-country-blocking/">Using CloudFlare for country blocking</a>
+      </li>
+    
+      <li class="post">
+        <a href="/nginx-1-0-11-has-been-released/">Nginx 1.0.11 has been released</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+<section class="googleplus googleplus-hidden">
+  <h1>
+    <a href="https://plus.google.com/109437240070931117441?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Soumik Ghosh -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'nginxlibrary';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://soumikgh.github.com/nginxlibrary/php-fastcgi/';
+        var disqus_url = 'http://soumikgh.github.com/nginxlibrary/php-fastcgi/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+<script type="text/javascript">
+var sc_project=6240294;
+var sc_invisible=1;
+var sc_security="4ec3a4e1";
+</script>
+
+<script type="text/javascript"
+src="http://www.statcounter.com/counter/counter.js"></script>
+<noscript><div class="s"><img
+class="s"
+src="http://c.statcounter.com/6240294/0/4ec3a4e1/1/"
+alt="" /></div></noscript>
+
+
+
+</body>
+</html>

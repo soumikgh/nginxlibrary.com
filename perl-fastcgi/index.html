@@ -1,0 +1,426 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Setting up Perl FastCGI with Nginx - Nginx Library</title>
+  <meta name="author" content="Soumik Ghosh">
+
+  
+  <!-- <meta name="description" content="Setting up Perl FastCGI with Nginx Feb 23rd, 2011 This article assumes that you are running on Debian Lenny (or above) and uses
+aptitude/apt-get for &hellip;"> -->
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://soumikgh.github.com/nginxlibrary/perl-fastcgi/" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link rel="icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Nginx Library" type="application/atom+xml" />
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+<!-- Piwik --> 
+<script type="text/javascript">
+var pkBaseURL = (("https:" == document.location.protocol) ? "https://hosted-oswa.org/piwik/" : "http://hosted-oswa.org/piwik/");
+
+document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script type="text/javascript">
+try {
+var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 3);
+piwikTracker.trackPageView();
+piwikTracker.enableLinkTracking();
+} catch( err ) {}
+</script><noscript><p><img src="http://hosted-oswa.org/piwik/piwik.php?idsite=3" style="border:0" alt="" /></p></noscript>
+
+<!-- End Piwik Tracking Code -->
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Nginx Library</a></h1>
+  
+    <h2>A repository of Nginx-related articles</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:soumikgh.github.com/nginxlibrary" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/about/">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Setting up Perl FastCGI with Nginx</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-02-23T05:09:18+00:00" pubdate data-updated="true">Feb 23<span>rd</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>This article assumes that you are running on Debian Lenny (or above) and uses
+aptitude/apt-get for fetching and installing packages.</p>
+
+<p>Install these packages :</p>
+
+<pre><code>apt-get install nginx libfcgi-perl wget
+</code></pre>
+
+<p>Now we replace Nginx&#8217;s package maintainer&#8217;s vhosts file with our own.</p>
+
+<pre><code>mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.old
+vi /etc/nginx/sites-available/default
+</code></pre>
+
+<p>Put these as the file contents :</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>server {
+</span><span class='line'>  listen   80;
+</span><span class='line'>  server_name  example.com www.example.com;
+</span><span class='line'>  root   /var/www/example.com;
+</span><span class='line'>  access_log  /var/www/logs/example.com.access.log;  
+</span><span class='line'>
+</span><span class='line'>  location / {
+</span><span class='line'>      index  index.html index.htm index.pl;
+</span><span class='line'>  }  
+</span><span class='line'>
+</span><span class='line'>  location ~ \.pl|cgi$ {
+</span><span class='line'>      try_files $uri =404;
+</span><span class='line'>      gzip off;
+</span><span class='line'>      fastcgi_pass  127.0.0.1:8999;
+</span><span class='line'>      fastcgi_index index.pl;
+</span><span class='line'>      fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+</span><span class='line'>      include fastcgi_params;
+</span><span class='line'>      } 
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now let us create the directory where the site will reside and assign proper
+ownership to it.</p>
+
+<pre><code>mkdir /var/www/example.com
+chown -R www-data:www-data /var/www/example.com
+</code></pre>
+
+<p>Next, we should download and configure a FastCGI wrapper script (credit: <a href="http://www.ruby-forum.com/topic/145858#645832">Denis
+S. Filimonov</a>), a Debian init script to start/stop the FastCGI process, give
+them the necessary permissions to be executed and set the init script to start
+up the FastCGI daemon automatically.</p>
+
+<pre><code>wget http://nginxlibrary.com/downloads/perl-fcgi/fastcgi-wrapper -O /usr/bin/fastcgi-wrapper.pl
+wget http://nginxlibrary.com/downloads/perl-fcgi/perl-fcgi -O /etc/init.d/perl-fcgi
+chmod +x /usr/bin/fastcgi-wrapper.pl
+chmod +x /etc/init.d/perl-fcgi
+update-rc.d perl-fcgi defaults
+insserv perl-fcgi
+</code></pre>
+
+<p>Now that everything is done, let us start Nginx and test out a sample Perl
+script.</p>
+
+<pre><code>/etc/init.d/nginx start
+/etc/init.d/perl-fcgi start
+vi /var/www/example.com/index.pl
+</code></pre>
+
+<p>Put the following in the file :</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='perl'><span class='line'><span class="c1">#!/usr/bin/perl</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">print</span> <span class="s">&quot;Content-type:text/html\n\n&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">print</span> <span class="s">&lt;&lt;EndOfHTML;</span>
+</span><span class='line'><span class="s">&lt;html&gt;&lt;head&gt;&lt;title&gt;Perl Environment Variables&lt;/title&gt;&lt;/head&gt;</span>
+</span><span class='line'><span class="s">&lt;body&gt;</span>
+</span><span class='line'><span class="s">&lt;h1&gt;Perl Environment Variables&lt;/h1&gt;</span>
+</span><span class='line'><span class="s">EndOfHTML</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">foreach</span> <span class="nv">$key</span> <span class="p">(</span><span class="nb">sort</span><span class="p">(</span><span class="nb">keys</span> <span class="nv">%ENV</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">print</span> <span class="s">&quot;$key = $ENV{$key}&lt;br&gt;\n&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">print</span> <span class="s">&quot;&lt;/body&gt;&lt;/html&gt;&quot;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Let us make the script executable by issuing the following command :</p>
+
+<pre><code>chmod a+x /var/www/example.com/index.pl
+</code></pre>
+
+<p>Now, go to example.com and you&#8217;ll see a list of Perl environment variables if
+everything was done correctly.</p>
+</div>
+If you find this article helpful, please consider <a href="/donate/">making a donation</a>.
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Soumik Ghosh</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-02-23T05:09:18+00:00" pubdate data-updated="true">Feb 23<span>rd</span>, 2011</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/category/server-configuration/'>Server Configuration</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://soumikgh.github.com/nginxlibrary/perl-fastcgi/" data-via="" data-counturl="http://soumikgh.github.com/nginxlibrary/perl-fastcgi/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/denying-access-to-a-directory/" title="Previous Post: Denying access to a directory">&laquo; Denying access to a directory</a>
+      
+      
+        <a class="basic-alignment right" href="/ubuntu-latest-nginx/" title="Next Post: Installing the latest version of Nginx on Ubuntu">Installing the latest version of Nginx on Ubuntu &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Categories</h1>
+  <ul id="categories">
+  	<li><a href="/category/server-configuration/">Server Configuration</a></li>
+  	<li><a href="/category/general-configuration/">General Configuration</a></li>
+	<li><a href="/category/application-specific-configuration/">Application-specific Configuration</a></li>
+  	<li><a href="/category/new-releases/">New Releases</a></li>
+        <li><a href="/category/general/">General</a></li>
+  </ul>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/xenforo-configuration/">Nginx configuration for XenForo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/phpbb-configuration/">Nginx configuration for phpBB</a>
+      </li>
+    
+      <li class="post">
+        <a href="/403-forbidden-error/">Resolving "403 Forbidden" error</a>
+      </li>
+    
+      <li class="post">
+        <a href="/using-cloudflare-for-country-blocking/">Using CloudFlare for country blocking</a>
+      </li>
+    
+      <li class="post">
+        <a href="/nginx-1-0-11-has-been-released/">Nginx 1.0.11 has been released</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+<section class="googleplus googleplus-hidden">
+  <h1>
+    <a href="https://plus.google.com/109437240070931117441?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Soumik Ghosh -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'nginxlibrary';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://soumikgh.github.com/nginxlibrary/perl-fastcgi/';
+        var disqus_url = 'http://soumikgh.github.com/nginxlibrary/perl-fastcgi/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+<script type="text/javascript">
+var sc_project=6240294;
+var sc_invisible=1;
+var sc_security="4ec3a4e1";
+</script>
+
+<script type="text/javascript"
+src="http://www.statcounter.com/counter/counter.js"></script>
+<noscript><div class="s"><img
+class="s"
+src="http://c.statcounter.com/6240294/0/4ec3a4e1/1/"
+alt="" /></div></noscript>
+
+
+
+</body>
+</html>

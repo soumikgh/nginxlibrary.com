@@ -1,0 +1,411 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Resolving "No input file specified" error - Nginx Library</title>
+  <meta name="author" content="Soumik Ghosh">
+
+  
+  <!-- <meta name="description" content="Resolving "No input file specified" error Sep 3rd, 2010 If you are using nginx with php-cgi and have followed the standard procedure to set it up, &hellip;"> -->
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://soumikgh.github.com/nginxlibrary/resolving-no-input-file-specified-error/" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link rel="icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Nginx Library" type="application/atom+xml" />
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+<!-- Piwik --> 
+<script type="text/javascript">
+var pkBaseURL = (("https:" == document.location.protocol) ? "https://hosted-oswa.org/piwik/" : "http://hosted-oswa.org/piwik/");
+
+document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script type="text/javascript">
+try {
+var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 3);
+piwikTracker.trackPageView();
+piwikTracker.enableLinkTracking();
+} catch( err ) {}
+</script><noscript><p><img src="http://hosted-oswa.org/piwik/piwik.php?idsite=3" style="border:0" alt="" /></p></noscript>
+
+<!-- End Piwik Tracking Code -->
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Nginx Library</a></h1>
+  
+    <h2>A repository of Nginx-related articles</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:soumikgh.github.com/nginxlibrary" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/about/">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Resolving "No input file specified" error</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2010-09-03T10:29:45+00:00" pubdate data-updated="true">Sep 3<span>rd</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>If you are using nginx with php-cgi and have followed the standard procedure to set it up, you might often get the &#8220;No input file specified&#8221; error. This error basically occurs when the php-cgi daemon cannot find a <code>.php</code> file to execute using the <code>SCRIPT_FILENAME</code> parameter that was supplied to it. I&#8217;ll discuss about the common causes of the error and it&#8217;s solutions.</p>
+
+<h3>Wrong path is sent to the php-cgi daemon</h3>
+
+<p>More often than not, a wrong path (<code>SCRIPT_FILENAME</code>) is sent to the fastCGI daemon. In many of the cases, this is due to a misconfiguration. Some of the setups I have seen are configured like this :</p>
+
+<pre><code>server {
+    listen   [::]:80;
+    server_name  example.com www.example.com;
+    access_log  /var/www/logs/example.com.access.log;  
+
+    location / {
+        root   /var/www/example.com;
+        index  index.html index.htm index.pl;
+    }
+
+    location /images {
+        autoindex on;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass   127.0.0.1:9000;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  /var/www/example.com$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}
+</code></pre>
+
+<p>Now, there are many things wrong with this configuration. An obvious and glaring issue is the <code>root</code> directive in the <code>location /</code> block. When the root is defined inside the location block, it is available/defined for that block only. Here, the <code>location /images</code> block will not match for any request because it does not have any <code>$document _root</code> defined and we will have to redundantly define root again for it. Obviously, the root directive should be moved out of the <code>location /</code> block and defined in the <code>server</code> block. This way, the location blocks will inherit the value defined in the parental server block. Of course, if you want to define a different <code>$document_root</code> for a location, you can put a root directive in a location block.</p>
+
+<p>Another issue is that the value of the fastCGI parameter <code>SCRIPT_FILENAME</code> is hard-coded. If we change the value of the root directive and move our files somewhere else in the directory chain, php-cgi will return a &#8220;No input file specified&#8221; error because will not be able to find the file in the hard-coded location which didn&#8217;t change when the <code>$document_root</code> was changed. So, we should set SCRIPT_FILENAME as below :</p>
+
+<pre><code>fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+</code></pre>
+
+<p>We should keep in mind that the root directive should be in the server block or else, only the <code>$fastcgi_script_name</code> will get passed as the SCRIPT_FILENAME and we will get the &#8220;No input file specified&#8221; error.</p>
+
+<h3>The file actually does not exist</h3>
+
+<p>What happens here is that, even when Nginx receives the request to serve a <strong>non-existent</strong> file with a <code>.php</code> extension, it passes the request to php-cgi. This happens because Nginx does not check for the file, it only checks if the <code>REQUEST_URI</code> ends with a <code>.php</code>. Php-cgi, while trying to processs the request, finds that the php file does not exist at all. Hence it sends a &#8220;No input file specified&#8221; message with a &#8220;404 Not Found&#8221; header.</p>
+
+<p>We can intercept the request for the non-existent php file and show a 404 page.</p>
+
+<p>First, find out the version of nginx you are using.</p>
+
+<pre><code>nginx -v
+</code></pre>
+
+<p>You&#8217;ll get an output like this :</p>
+
+<pre><code>nginx version: nginx/0.7.67
+</code></pre>
+
+<p>If php-cgi is running on port 9000, you&#8217;ll have something like this in your
+vhosts file :</p>
+
+<pre><code>location ~ .php$ {
+    fastcgi_pass   127.0.0.1:9000;
+    fastcgi_index  index.php;
+    fastcgi_param  SCRIPT_FILENAME ....
+    ...................................
+    ...................................
+}
+</code></pre>
+
+<p>Since nginx versions less than 0.6.36 doesn&#8217;t have the try_files directive,
+we&#8217;ll have two versions of the code.</p>
+
+<p><strong>For nginx 0.6.36+</strong></p>
+
+<p>We&#8217;ll use try_files here to catch non-existent URLs and display an error page.</p>
+
+<pre><code>location ~ .php$ {
+    try_files  $uri =404;
+    fastcgi_pass   127.0.0.1:9000;
+    fastcgi_index  index.php;
+    fastcgi_param  SCRIPT_FILENAME ....
+    ...................................
+    ...................................
+}
+</code></pre>
+
+<p>Here we are checking for the existence of the <code>.php</code> file before passing it to the fastCGI backend. If the file does not exist, we return a 404 Not Found page.</p>
+
+<p><strong>For older versions :</strong></p>
+
+<pre><code>location ~ .php$ {
+    fastcgi_intercept_errors on;
+    error_page  404  /path/to/404.htm;
+    fastcgi_pass   127.0.0.1:9000;
+    fastcgi_index  index.php;
+    fastcgi_param  SCRIPT_FILENAME ....
+    ...................................
+    ...................................
+}
+</code></pre>
+
+<p>Here the <code>fastcgi_intercept_errors</code> asks the fastCGI backend to return error statuses to Nginx so that Nginx can respond with a custm 404 page. The error_page directive defines a custom 404 page. Note that this will work for both older and newer versions of Nginx, but personally I think the try_catch method is cleaner.</p>
+
+<h3>Permissions are not set correctly</h3>
+
+<p>Permissions are not supposed to be much of a headache for executing PHP files. Apparently, we only need to make sure that the user the fastCGI backend is running as, has read permissions for the file. But it is often overlooked that a user also needs execute permissions for every parent directory of a file to chdir to that file. For example, say a file is located at -</p>
+
+<pre><code>/home/steve/files/req.txt
+</code></pre>
+
+<p>The user needs to have read permissions for the file as well as execute permissions for <code>/</code>, <code>/home</code>, <code>/home/steve</code> and <code>/home/steve/files</code>.</p>
+
+<p>I have covered most of the common issues that cause this error. If you have something else, feel free to leave a comment.</p>
+</div>
+If you find this article helpful, please consider <a href="/donate/">making a donation</a>.
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Soumik Ghosh</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2010-09-03T10:29:45+00:00" pubdate data-updated="true">Sep 3<span>rd</span>, 2010</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/category/general-configuration/'>General Configuration</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://soumikgh.github.com/nginxlibrary/resolving-no-input-file-specified-error/" data-via="" data-counturl="http://soumikgh.github.com/nginxlibrary/resolving-no-input-file-specified-error/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/welcome-to-nginx-library/" title="Previous Post: Welcome to Nginx Library">&laquo; Welcome to Nginx Library</a>
+      
+      
+        <a class="basic-alignment right" href="/wwwno-www-rewrite-rules/" title="Next Post: Www/no-www rewrite rules">Www/no-www rewrite rules &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Categories</h1>
+  <ul id="categories">
+  	<li><a href="/category/server-configuration/">Server Configuration</a></li>
+  	<li><a href="/category/general-configuration/">General Configuration</a></li>
+	<li><a href="/category/application-specific-configuration/">Application-specific Configuration</a></li>
+  	<li><a href="/category/new-releases/">New Releases</a></li>
+        <li><a href="/category/general/">General</a></li>
+  </ul>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/xenforo-configuration/">Nginx configuration for XenForo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/phpbb-configuration/">Nginx configuration for phpBB</a>
+      </li>
+    
+      <li class="post">
+        <a href="/403-forbidden-error/">Resolving "403 Forbidden" error</a>
+      </li>
+    
+      <li class="post">
+        <a href="/using-cloudflare-for-country-blocking/">Using CloudFlare for country blocking</a>
+      </li>
+    
+      <li class="post">
+        <a href="/nginx-1-0-11-has-been-released/">Nginx 1.0.11 has been released</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+<section class="googleplus googleplus-hidden">
+  <h1>
+    <a href="https://plus.google.com/109437240070931117441?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Soumik Ghosh -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'nginxlibrary';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://soumikgh.github.com/nginxlibrary/resolving-no-input-file-specified-error/';
+        var disqus_url = 'http://soumikgh.github.com/nginxlibrary/resolving-no-input-file-specified-error/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+<script type="text/javascript">
+var sc_project=6240294;
+var sc_invisible=1;
+var sc_security="4ec3a4e1";
+</script>
+
+<script type="text/javascript"
+src="http://www.statcounter.com/counter/counter.js"></script>
+<noscript><div class="s"><img
+class="s"
+src="http://c.statcounter.com/6240294/0/4ec3a4e1/1/"
+alt="" /></div></noscript>
+
+
+
+</body>
+</html>

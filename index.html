@@ -1,1 +1,894 @@
-My Octopress Page is coming soon &hellip;
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Nginx Library</title>
+  <meta name="author" content="Soumik Ghosh">
+
+  
+  <!-- <meta name="description" content="Writing a configuration file for XenForo is pretty simple and very similar to the Wordpress configuration where requests are internally redirected to &hellip;"> -->
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://soumikgh.github.com/nginxlibrary/" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link rel="icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Nginx Library" type="application/atom+xml" />
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+<!-- Piwik --> 
+<script type="text/javascript">
+var pkBaseURL = (("https:" == document.location.protocol) ? "https://hosted-oswa.org/piwik/" : "http://hosted-oswa.org/piwik/");
+
+document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script type="text/javascript">
+try {
+var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 3);
+piwikTracker.trackPageView();
+piwikTracker.enableLinkTracking();
+} catch( err ) {}
+</script><noscript><p><img src="http://hosted-oswa.org/piwik/piwik.php?idsite=3" style="border:0" alt="" /></p></noscript>
+
+<!-- End Piwik Tracking Code -->
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Nginx Library</a></h1>
+  
+    <h2>A repository of Nginx-related articles</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:soumikgh.github.com/nginxlibrary" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/about/">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/xenforo-configuration/">Nginx configuration for XenForo</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2012-04-10T19:45:53+00:00" pubdate data-updated="true">Apr 10<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Writing a configuration file for XenForo is pretty simple and very similar to the <a href="http://nginxlibrary.com/wordpress-permalinks/">Wordpress configuration</a> where requests are internally redirected to the index.php file. With this configuration XenForo&#8217;s friendly URLs work perfectly, as well as external access is cut off for some directories like <code>libraries</code>
+ and <code>internal_data</code>.</p>
+
+<pre><code>server {
+    listen   [::]:80;
+    server_name  example.com www.example.com;
+    root   /var/www/example.com;
+    index  index.html index.htm index.php;
+    access_log  /var/www/logs/example.com.access.log;  
+
+    location / {
+        try_files $uri $uri/ /index.php?$uri&amp;$args;
+    }
+
+    location ~ /(internal_data|library) {
+         internal;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass   unix:/tmp/php.socket;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }   
+}
+</code></pre>
+
+<p>For a XenForo installation in a sub directory <code>xenforo</code>, the configuration should be like this:</p>
+
+<pre><code>server {
+    listen   [::]:80;
+    server_name  example.com www.example.com;
+    root   /var/www/example.com;
+    index  index.html index.htm index.php;
+    access_log  /var/www/logs/example.com.access.log;  
+
+    location /xenforo/ {
+        try_files $uri $uri/ /xenforo/index.php?$uri&amp;$args;
+    }
+
+    location ~ /xenforo/(internal_data|library) {
+         internal;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass   unix:/tmp/php.socket;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }   
+}
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/phpbb-configuration/">Nginx configuration for phpBB</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2012-04-08T20:02:53+00:00" pubdate data-updated="true">Apr 8<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I had previously <a href="http://nginxlibrary.com/converting-phpbbs-default-htaccess-for-nginx/">written an article</a> about converting phpBB&#8217;s default htaccess rules to Nginx. Here I&#8217;ll share a full-blown Nginx configuration file for serving a phpBB forum.</p>
+
+<p>This configuration file :</p>
+
+<blockquote><ul>
+<li>Redirects www sub domain to the bare domain along with any parked domains.</li>
+<li>Prevents external access to files and directories like config.php, avatar upload directory, etc.</li>
+<li>Sets proper Expires header for images.</li>
+</ul>
+</blockquote>
+
+<pre><code>server {
+    listen   [::]:80;
+    server_name  www.domain.com parkeddomain.com *.parkeddomain.com;
+    rewrite ^    http://domain.com$request_uri? permanent;
+}
+
+server {
+    listen   [::]:80;
+    server_name  domain.com;
+    root   /var/www/domain.com;
+    index  index.php index.html index.htm;
+    access_log  /var/logs/domain.com.access.log;
+
+    location ~ /(config\.php|common\.php|cache|files|images/avatars/upload|includes|store) {
+        deny all;
+        return 403;
+    }
+
+    location ~* \.(gif|jpe?g|png|css)$ {
+        expires   30d;
+    }
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_pass   unix:/tmp/php.socket;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/403-forbidden-error/">Resolving &#8220;403 Forbidden&#8221; error</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2012-01-09T15:29:45+00:00" pubdate data-updated="true">Jan 9<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>403 Forbidden errors are Nginx&#8217;s way of telling &#8220;You have requested for a resource but we cannot give it to you.&#8221; 403 Forbidden is technically not an error but a HTTP status code. 403 response headers are intentionally returned in many cases such as -</p>
+
+<ul>
+<li>User is blocked from requesting that page/resource or the site as a whole.</li>
+<li>User tries to access a directory but <code>autoindex</code> is set to <code>off</code>.</li>
+<li>User tries to access a file that can be only accessed internally.</li>
+</ul>
+
+
+<p>These are some among many cases where a 403 Forbidden response is intentionally returned. But here we will talk about the causes of 403 responses that are unintentional/not desired which generally occur as a result of misconfiguration on the server side.</p>
+
+<h3>Permissions are not set correctly</h3>
+
+<p>This is the most common cause of this error. By permissions, I do not only mean the permissions for the file that is being accessed. In order to serve a file, Nginx needs to have <em>read</em> permissions for the file as well as <em>execute</em> permissions for every hierarchial parent directory of the file to chdir to it. For example, to access the file located at -</p>
+
+<pre><code>/usr/share/myfiles/image.jpg
+</code></pre>
+
+<p>Nginx needs to have <em>read</em> permissions for the file as well as <em>execute</em> permissions for <code>/</code>, <code>/usr</code>, <code>/usr/share</code> and <code>/usr/share/myfiles</code>. If you use the standard 755 for directories and 644 for files (umask: 022), you should not run into this problem.</p>
+
+<p>To check for ownership and permissions on a path, we can use the <code>namei</code> utility like this -</p>
+
+<pre><code>$ namei -l /var/www/vhosts/example.com
+
+f: /var/www/vhosts/example.com
+drwxr-xr-x root     root     /
+drwxr-xr-x root     root     var
+drwxr-xr-x www-data www-data www
+drwxr-xr-x www-data www-data vhosts
+drwxr-xr-x clara    clara    example.com
+</code></pre>
+
+<h3>Directory index is not properly defined</h3>
+
+<p>Sometimes, the index directive does not contain the desired directory index. For example, for a standard setup with PHP, the index directive should be -</p>
+
+<pre><code>index index.html index.htm index.php;
+</code></pre>
+
+<p>According to this example, when a directory is acessed directly, Nginx will try to serve index.html, then index.htm and index.php after that. If none of them are found, Nginx will return a 403 header. If index.php were not defined in the root directive, Nginx would have returned 403 without checking for the existence of index.php.</p>
+
+<p>Similarly, for a Python setup, index.py should be defined as a directory index.</p>
+
+<p>These are the most common causes of undesired 403 responses. Feel free to leave a comment if you are still getting 403s.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/using-cloudflare-for-country-blocking/">Using CloudFlare for country blocking</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-12-29T06:10:59+00:00" pubdate data-updated="true">Dec 29<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><img class="right" src="http://nginxlibrary.com/images/post-images/2011/cloudflare-logo.png" width="244" height="40"></p>
+
+<p><a href="https://www.cloudflare.com/" title="CloudFlare">CloudFlare</a> is an innovative service, providing
+webmasters with a CDN (Content Delivery Network) and <a href="https://www.cloudflare.com/overview" title="CloudFlare features overview">many other things</a>.
+Among these other things, it provides an IP geolocation service using which we
+can use to redirect/block visitors from specific countries.</p>
+
+<p>We need to first enable &#8216;IP Geolocation&#8217; in the CloudFlare settings for this
+to work -</p>
+
+<p><a href="http://nginxlibrary.com/images/post-images/2011/ip_geolocation.jpg"><img src="http://nginxlibrary.com/images/post-images/2011/ip_geolocation.jpg" title="IP geolocation" alt="IP geolocation" /></a></p>
+
+<p>We also need to make sure that the A record for the domain/sub domain is being
+proxied though the CloudFlare proxy. So, enable CloudFlare for the relevant A
+record from the DNS settings if it hasn&#8217;t been set accordingly.</p>
+
+<p>If everything is done properly, the HTTP_CF_IPCOUNTRY environment variable
+should contain the country code for the visitor. To test it, we can write a
+small script in Perl.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='perl'><span class='line'><span class="c1">#!/usr/bin/perl</span>
+</span><span class='line'><span class="k">print</span> <span class="s">&quot;Content-type: text/html\n\n$ENV{&#39;HTTP_CF_IPCOUNTRY&#39;}&quot;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Run the script and it should show you your country code. A list of country
+codes can be found <a href="http://www.maxmind.com/app/iso3166">here</a>.</p>
+
+<p>Now, we need to take care of the Nginx configuration. We need to map the
+environment variable to a variable of our own, so that the value of our
+variable changes depending on whether we want to allow visitors from the
+country or not.</p>
+
+<p>We need to put the following code inside the http block but outside the server
+block for your website. It can be put in <code>/etc/nginx/nginx.conf</code> inside the
+HTTP block or in your vhosts file, outside of the server block.</p>
+
+<pre><code>map $http_cf_ipcountry $allow {
+        default yes;
+        CN no;
+        MX no;
+        NO no;
+}
+</code></pre>
+
+<p>This sets <code>$allow</code> to yes or no, depending on the country of the visitor.
+Here, we are setting the variable to no if the visitor is from China, Mexico,
+or Norway. We can also set the default to no, and allow countries one by one
+if we need to allow only a few countries and block all others. Now that the
+variable is set, we need to instruct Nginx to serve a 403 page to the visitors
+from the blocked countries. Add this anywhere inside the server block :</p>
+
+<pre><code>if ($allow = no) {
+    return 403;
+}
+</code></pre>
+
+<p>This will make Nginx return a 403 Forbidden HTTP status code. A custom 403
+error page can also be defined to make the error page more helpful.</p>
+
+<p>If you are not using CloudFlare, you can still block visitors by country <a href="http://nginxlibrary.com/ip-based-country-blocking/">using the GeoIP module</a>.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/nginx-1-0-11-has-been-released/">Nginx 1.0.11 has been released</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-12-16T03:08:30+00:00" pubdate data-updated="true">Dec 16<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Nginx 1.0.11 has been released.</p>
+
+<p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
+
+<p><a href="http://forum.nginx.org/read.php?27,218365">The changes</a> include :</p>
+
+<ul>
+<li><p>Change: now double quotes are encoded in an &#8220;echo&#8221; SSI-command output. Thanks to Zaur Abasmirzoev.</p></li>
+<li><p>Feature: the &#8220;image_filter_sharpen&#8221; directive.</p></li>
+<li><p>Bugfix: a segmentation fault might occur in a worker process if SNI was used; the bug had appeared in 1.0.9.</p></li>
+<li><p>Bugfix: SIGWINCH signal did not work after first binary upgrade; the bug had appeared in 1.0.9.</p></li>
+<li><p>Bugfix: the &#8220;If-Modified-Since&#8221;, &#8220;If-Range&#8221;, etc. client request header lines might be passed to backend while caching; or not passed without caching if caching was enabled in another part of the configuration.</p></li>
+<li><p>Bugfix: in the &#8220;scgi_param&#8221; directive, if complex parameters were used.</p></li>
+<li><p>Bugfix: &#8220;add_header&#8221; and &#8220;expires&#8221; directives did not work if a request was proxied and response status code was 206.</p></li>
+<li><p>Bugfix: in the &#8220;expires @time&#8221; directive.</p></li>
+<li><p>Bugfix: in the ngx_http_flv_module. Thanks to Piotr Sikora.</p></li>
+<li><p>Bugfix: in the ngx_http_mp4_module.</p></li>
+<li><p>Bugfix: nginx could not be built on FreeBSD 10.</p></li>
+<li><p>Bugfix: nginx could not be built on AIX.</p></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/nginx-1-0-10-has-been-released/">Nginx 1.0.10 has been released</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-11-15T07:11:03+00:00" pubdate data-updated="true">Nov 15<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Nginx 1.0.10 has been released.</p>
+
+<p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
+
+<p><a href="http://forum.nginx.org/read.php?27,218365">The changes</a> include :</p>
+
+<ul>
+<li><p>Bugfix: a segmentation fault might occur in a worker process if resolver got a big DNS response. Thanks to Ben Hawkes.</p></li>
+<li><p>Bugfix: in cache key calculation if internal MD5 implementation was used; the bug had appeared in 1.0.4.</p></li>
+<li><p>Bugfix: the module ngx_http_mp4_module sent incorrect &#8220;Content-Length&#8221; response header line if the &#8220;start&#8221; argument was used. Thanks to Piotr Sikora.</p></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/nginx-1-0-9-has-been-released/">Nginx 1.0.9 has been released</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-11-01T13:06:46+00:00" pubdate data-updated="true">Nov 1<span>st</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Nginx 1.0.9 has been released.</p>
+
+<p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
+
+<p><a href="http://forum.nginx.org/read.php?27,217643">The changes</a> include :</p>
+
+<ul>
+<li><p>Change: now the 0x7F-0x1F characters are escaped as \xXX in an access_log.</p></li>
+<li><p>Change: now SIGWINCH signal works only in daemon mode.</p></li>
+<li><p>Feature: &#8220;proxy/fastcgi/scgi/uwsgi_ignore_headers&#8221; directives support the following additional values: X-Accel-Limit-Rate, X-Accel-Buffering, X-Accel-Charset.</p></li>
+<li><p>Feature: decrease of memory consumption if SSL is used.</p></li>
+<li><p>Feature: accept filters are now supported on NetBSD.</p></li>
+<li><p>Feature: the &#8220;uwsgi_buffering&#8221; and &#8220;scgi_buffering&#8221; directives. Thanks to Peter Smit.</p></li>
+<li><p>Bugfix: a segmentation fault occurred on start or while reconfiguration if the &#8220;ssl&#8221; directive was used at http level and there was no &#8220;ssl_certificate&#8221; defined.</p></li>
+<li><p>Bugfix: some UTF-8 characters were processed incorrectly. Thanks to Alexey Kuts.</p></li>
+<li><p>Bugfix: the ngx_http_rewrite_module directives specified at &#8220;server&#8221; level were executed twice if no matching locations were defined.</p></li>
+<li><p>Bugfix: a socket leak might occurred if &#8220;aio sendfile&#8221; was used.</p></li>
+<li><p>Bugfix: connections with fast clients might be closed after send_timeout if file AIO was used.</p></li>
+<li><p>Bugfix: in the ngx_http_autoindex_module.</p></li>
+<li><p>Bugfix: the module ngx_http_mp4_module did not support seeking on 32-bit platforms.</p></li>
+<li><p>Bugfix: non-cacheable responses might be cached if &#8220;proxy_cache_bypass&#8221; directive was used. Thanks to John Ferlito.</p></li>
+<li><p>Bugfix: cached responses with an empty body were returned incorrectly; the bug had appeared in 0.8.31.</p></li>
+<li><p>Bugfix: 201 responses of the ngx_http_dav_module were incorrect; the bug had appeared in 0.8.32.</p></li>
+<li><p>Bugfix: in the &#8220;return&#8221; directive.</p></li>
+<li><p>Bugfix: the &#8220;ssl_verify_client&#8221;, &#8220;ssl_verify_depth&#8221;, and &#8220;ssl_prefer_server_ciphers&#8221; directives might work incorrectly if SNI was used.</p></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/nginx-1-0-8-has-been-released/">Nginx 1.0.8 has been released</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-10-01T11:03:51+00:00" pubdate data-updated="true">Oct 1<span>st</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Nginx 1.0.8 has been released.</p>
+
+<p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
+
+<p><a href="http://forum.nginx.org/read.php?27,216141">The changes</a> include :</p>
+
+<ul>
+<li>Bugfix: nginx could not be built &#8211;with-http_mp4_module and without &#8211;with-debug option.</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/nginx-1-0-7-has-been-released/">Nginx 1.0.7 has been released</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-09-30T14:59:02+00:00" pubdate data-updated="true">Sep 30<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Nginx 1.0.7 has been released.</p>
+
+<p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
+
+<p><a href="http://forum.nginx.org/read.php?27,216114">The changes</a> include :</p>
+
+<ul>
+<li><p>Change: now if total size of all ranges is greater than source response size, then nginx disables ranges and returns just the source response.</p></li>
+<li><p>Feature: the &#8220;max_ranges&#8221; directive.</p></li>
+<li><p>Feature: the module ngx_http_mp4_module.</p></li>
+<li><p>Feature: the &#8220;worker_aio_requests&#8221; directive.</p></li>
+<li><p>Bugfix: if nginx was built &#8211;with-file-aio it could not be run on Linux kernel which did not support AIO.</p></li>
+<li><p>Bugfix: in Linux AIO error processing. Thanks to Hagai Avrahami.</p></li>
+<li><p>Bugfix: in Linux AIO combined with open_file_cache.</p></li>
+<li><p>Bugfix: open_file_cache did not update file info on retest if file was not atomically changed.</p></li>
+<li><p>Bugfix: reduced memory consumption for long-lived requests.</p></li>
+<li><p>Bugfix: in the &#8220;proxy/fastcgi/scgi/uwsgi_ignore_client_abort&#8221; directives.</p></li>
+<li><p>Bugfix: nginx could not be built on MacOSX 10.7.</p></li>
+<li><p>Bugfix: in the &#8220;proxy/fastcgi/scgi/uwsgi_ignore_client_abort&#8221; directives.</p></li>
+<li><p>Bugfix: request body might be processed incorrectly if client used pipelining.</p></li>
+<li><p>Bugfix: in the &#8220;request_body_in_single_buf&#8221; directive.</p></li>
+<li><p>Bugfix: in &#8220;proxy_set_body&#8221; and &#8220;proxy_pass_request_body&#8221; directives if SSL connection to backend was used.</p></li>
+<li><p>Bugfix: nginx hogged CPU if all servers in an upstream were marked as &#8220;down&#8221;.</p></li>
+<li><p>Bugfix: a segmentation fault might occur during reconfiguration if ssl_session_cache was defined but not used in previous configuration.</p></li>
+<li><p>Bugfix: a segmentation fault might occur in a worker process if many backup servers were used in an upstream.</p></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/nginx-1-0-6-has-been-released/">Nginx 1.0.6 has been released</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+<time class="updated" datetime="2011-08-30T10:55:51+00:00" pubdate data-updated="true">Aug 30<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Nginx 1.0.6 has been released.</p>
+
+<p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
+
+<p><a href="http://forum.nginx.org/read.php?27,214440">The changes</a> include :</p>
+
+<ul>
+<li><p>Feature: cache loader run time decrease.</p></li>
+<li><p>Feature: loading time decrease of configuration with large number of HTTPS sites.</p></li>
+<li><p>Feature: now nginx supports ECDHE key exchange ciphers. Thanks to Adrian Kotelba.</p></li>
+<li><p>Feature: the &#8220;lingering_close&#8221; directive.</p></li>
+<li><p>Feature: now shared zones and caches use POSIX semaphores on Solaris. Thanks to Den Ivanov.</p></li>
+<li><p>Bugfix: nginx could not be built on Linux 3.0.</p></li>
+<li><p>Bugfix: a segmentation fault might occur in a worker process if &#8220;fastcgi/scgi/uwsgi_param&#8221; directives were used with values starting with &#8220;HTTP_&#8221;; the bug had appeared in 0.8.40.</p></li>
+<li><p>Bugfix: in closing connection for pipelined requests.</p></li>
+<li><p>Bugfix: nginx did not disable gzipping if client sent &#8220;gzip;q=0&#8221; in &#8220;Accept-Encoding&#8221; request header line.</p></li>
+<li><p>Bugfix: in timeout in unbuffered proxied mode.</p></li>
+<li><p>Bugfix: memory leaks when a &#8220;proxy_pass&#8221; directive contains variables and proxies to an HTTPS backend.</p></li>
+<li><p>Bugfix: in parameter validaiton of a &#8220;proxy_pass&#8221; directive with variables. Thanks to Lanshun Zhou.</p></li>
+<li><p>Bugfix: SSL did not work on QNX.</p></li>
+<li><p>Bugfix: SSL modules could not be built by gcc 4.6 without &#8211;with-debug option.</p></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/page/2/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Categories</h1>
+  <ul id="categories">
+  	<li><a href="/category/server-configuration/">Server Configuration</a></li>
+  	<li><a href="/category/general-configuration/">General Configuration</a></li>
+	<li><a href="/category/application-specific-configuration/">Application-specific Configuration</a></li>
+  	<li><a href="/category/new-releases/">New Releases</a></li>
+        <li><a href="/category/general/">General</a></li>
+  </ul>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/xenforo-configuration/">Nginx configuration for XenForo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/phpbb-configuration/">Nginx configuration for phpBB</a>
+      </li>
+    
+      <li class="post">
+        <a href="/403-forbidden-error/">Resolving &#8220;403 Forbidden&#8221; error</a>
+      </li>
+    
+      <li class="post">
+        <a href="/using-cloudflare-for-country-blocking/">Using CloudFlare for country blocking</a>
+      </li>
+    
+      <li class="post">
+        <a href="/nginx-1-0-11-has-been-released/">Nginx 1.0.11 has been released</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+<section class="googleplus googleplus-hidden">
+  <h1>
+    <a href="https://plus.google.com/109437240070931117441?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Soumik Ghosh -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'nginxlibrary';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+<script type="text/javascript">
+var sc_project=6240294;
+var sc_invisible=1;
+var sc_security="4ec3a4e1";
+</script>
+
+<script type="text/javascript"
+src="http://www.statcounter.com/counter/counter.js"></script>
+<noscript><div class="s"><img
+class="s"
+src="http://c.statcounter.com/6240294/0/4ec3a4e1/1/"
+alt="" /></div></noscript>
+
+
+
+</body>
+</html>

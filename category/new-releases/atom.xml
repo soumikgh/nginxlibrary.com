@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: New Releases | Nginx Library]]></title>
+  <link href="http://soumikgh.github.com/nginxlibrary/category/new-releases/atom.xml" rel="self"/>
+  <link href="http://soumikgh.github.com/nginxlibrary/"/>
+  <updated>2013-10-17T14:57:44+00:00</updated>
+  <id>http://soumikgh.github.com/nginxlibrary/</id>
+  <author>
+    <name><![CDATA[Soumik Ghosh]]></name>
+    <email><![CDATA[contactSoumik@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Nginx 1.0.11 has been released]]></title>
+    <link href="http://soumikgh.github.com/nginxlibrary/nginx-1-0-11-has-been-released/"/>
+    <updated>2011-12-16T03:08:30+00:00</updated>
+    <id>http://soumikgh.github.com/nginxlibrary/nginx-1-0-11-has-been-released</id>
+    <content type="html"><![CDATA[<p>Nginx 1.0.11 has been released.</p>
+
+<p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
+
+<p><a href="http://forum.nginx.org/read.php?27,218365">The changes</a> include :</p>
+
+<ul>
+<li><p>Change: now double quotes are encoded in an "echo" SSI-command output. Thanks to Zaur Abasmirzoev.</p></li>
+<li><p>Feature: the "image_filter_sharpen" directive.</p></li>
+<li><p>Bugfix: a segmentation fault might occur in a worker process if SNI was used; the bug had appeared in 1.0.9.</p></li>
+<li><p>Bugfix: SIGWINCH signal did not work after first binary upgrade; the bug had appeared in 1.0.9.</p></li>
+<li><p>Bugfix: the "If-Modified-Since", "If-Range", etc. client request header lines might be passed to backend while caching; or not passed without caching if caching was enabled in another part of the configuration.</p></li>
+<li><p>Bugfix: in the "scgi_param" directive, if complex parameters were used.</p></li>
+<li><p>Bugfix: "add_header" and "expires" directives did not work if a request was proxied and response status code was 206.</p></li>
+<li><p>Bugfix: in the "expires @time" directive.</p></li>
+<li><p>Bugfix: in the ngx_http_flv_module. Thanks to Piotr Sikora.</p></li>
+<li><p>Bugfix: in the ngx_http_mp4_module.</p></li>
+<li><p>Bugfix: nginx could not be built on FreeBSD 10.</p></li>
+<li><p>Bugfix: nginx could not be built on AIX.</p></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Nginx 1.0.10 has been released]]></title>
+    <link href="http://soumikgh.github.com/nginxlibrary/nginx-1-0-10-has-been-released/"/>
+    <updated>2011-11-15T07:11:03+00:00</updated>
+    <id>http://soumikgh.github.com/nginxlibrary/nginx-1-0-10-has-been-released</id>
+    <content type="html"><![CDATA[<p>Nginx 1.0.10 has been released.</p>
+
+<p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
+
+<p><a href="http://forum.nginx.org/read.php?27,218365">The changes</a> include :</p>
+
+<ul>
+<li><p>Bugfix: a segmentation fault might occur in a worker process if resolver got a big DNS response. Thanks to Ben Hawkes.</p></li>
+<li><p>Bugfix: in cache key calculation if internal MD5 implementation was used; the bug had appeared in 1.0.4.</p></li>
+<li><p>Bugfix: the module ngx_http_mp4_module sent incorrect "Content-Length" response header line if the "start" argument was used. Thanks to Piotr Sikora.</p></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Nginx 1.0.9 has been released]]></title>
+    <link href="http://soumikgh.github.com/nginxlibrary/nginx-1-0-9-has-been-released/"/>
+    <updated>2011-11-01T13:06:46+00:00</updated>
+    <id>http://soumikgh.github.com/nginxlibrary/nginx-1-0-9-has-been-released</id>
+    <content type="html"><![CDATA[<p>Nginx 1.0.9 has been released.</p>
+
+<p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
+
+<p><a href="http://forum.nginx.org/read.php?27,217643">The changes</a> include :</p>
+
+<ul>
+<li><p>Change: now the 0x7F-0x1F characters are escaped as \xXX in an access_log.</p></li>
+<li><p>Change: now SIGWINCH signal works only in daemon mode.</p></li>
+<li><p>Feature: "proxy/fastcgi/scgi/uwsgi_ignore_headers" directives support the following additional values: X-Accel-Limit-Rate, X-Accel-Buffering, X-Accel-Charset.</p></li>
+<li><p>Feature: decrease of memory consumption if SSL is used.</p></li>
+<li><p>Feature: accept filters are now supported on NetBSD.</p></li>
+<li><p>Feature: the "uwsgi_buffering" and "scgi_buffering" directives. Thanks to Peter Smit.</p></li>
+<li><p>Bugfix: a segmentation fault occurred on start or while reconfiguration if the "ssl" directive was used at http level and there was no "ssl_certificate" defined.</p></li>
+<li><p>Bugfix: some UTF-8 characters were processed incorrectly. Thanks to Alexey Kuts.</p></li>
+<li><p>Bugfix: the ngx_http_rewrite_module directives specified at "server" level were executed twice if no matching locations were defined.</p></li>
+<li><p>Bugfix: a socket leak might occurred if "aio sendfile" was used.</p></li>
+<li><p>Bugfix: connections with fast clients might be closed after send_timeout if file AIO was used.</p></li>
+<li><p>Bugfix: in the ngx_http_autoindex_module.</p></li>
+<li><p>Bugfix: the module ngx_http_mp4_module did not support seeking on 32-bit platforms.</p></li>
+<li><p>Bugfix: non-cacheable responses might be cached if "proxy_cache_bypass" directive was used. Thanks to John Ferlito.</p></li>
+<li><p>Bugfix: cached responses with an empty body were returned incorrectly; the bug had appeared in 0.8.31.</p></li>
+<li><p>Bugfix: 201 responses of the ngx_http_dav_module were incorrect; the bug had appeared in 0.8.32.</p></li>
+<li><p>Bugfix: in the "return" directive.</p></li>
+<li><p>Bugfix: the "ssl_verify_client", "ssl_verify_depth", and "ssl_prefer_server_ciphers" directives might work incorrectly if SNI was used.</p></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Nginx 1.0.8 has been released]]></title>
+    <link href="http://soumikgh.github.com/nginxlibrary/nginx-1-0-8-has-been-released/"/>
+    <updated>2011-10-01T11:03:51+00:00</updated>
+    <id>http://soumikgh.github.com/nginxlibrary/nginx-1-0-8-has-been-released</id>
+    <content type="html"><![CDATA[<p>Nginx 1.0.8 has been released.</p>
+
+<p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
+
+<p><a href="http://forum.nginx.org/read.php?27,216141">The changes</a> include :</p>
+
+<ul>
+<li>Bugfix: nginx could not be built --with-http_mp4_module and without --with-debug option.</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Nginx 1.0.7 has been released]]></title>
+    <link href="http://soumikgh.github.com/nginxlibrary/nginx-1-0-7-has-been-released/"/>
+    <updated>2011-09-30T14:59:02+00:00</updated>
+    <id>http://soumikgh.github.com/nginxlibrary/nginx-1-0-7-has-been-released</id>
+    <content type="html"><![CDATA[<p>Nginx 1.0.7 has been released.</p>
+
+<p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
+
+<p><a href="http://forum.nginx.org/read.php?27,216114">The changes</a> include :</p>
+
+<ul>
+<li><p>Change: now if total size of all ranges is greater than source response size, then nginx disables ranges and returns just the source response.</p></li>
+<li><p>Feature: the "max_ranges" directive.</p></li>
+<li><p>Feature: the module ngx_http_mp4_module.</p></li>
+<li><p>Feature: the "worker_aio_requests" directive.</p></li>
+<li><p>Bugfix: if nginx was built --with-file-aio it could not be run on Linux kernel which did not support AIO.</p></li>
+<li><p>Bugfix: in Linux AIO error processing. Thanks to Hagai Avrahami.</p></li>
+<li><p>Bugfix: in Linux AIO combined with open_file_cache.</p></li>
+<li><p>Bugfix: open_file_cache did not update file info on retest if file was not atomically changed.</p></li>
+<li><p>Bugfix: reduced memory consumption for long-lived requests.</p></li>
+<li><p>Bugfix: in the "proxy/fastcgi/scgi/uwsgi_ignore_client_abort" directives.</p></li>
+<li><p>Bugfix: nginx could not be built on MacOSX 10.7.</p></li>
+<li><p>Bugfix: in the "proxy/fastcgi/scgi/uwsgi_ignore_client_abort" directives.</p></li>
+<li><p>Bugfix: request body might be processed incorrectly if client used pipelining.</p></li>
+<li><p>Bugfix: in the "request_body_in_single_buf" directive.</p></li>
+<li><p>Bugfix: in "proxy_set_body" and "proxy_pass_request_body" directives if SSL connection to backend was used.</p></li>
+<li><p>Bugfix: nginx hogged CPU if all servers in an upstream were marked as "down".</p></li>
+<li><p>Bugfix: a segmentation fault might occur during reconfiguration if ssl_session_cache was defined but not used in previous configuration.</p></li>
+<li><p>Bugfix: a segmentation fault might occur in a worker process if many backup servers were used in an upstream.</p></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>
