@@ -2,22 +2,22 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: General | Nginx Library]]></title>
-  <link href="http://soumikgh.github.com/nginxlibrary/category/general/atom.xml" rel="self"/>
-  <link href="http://soumikgh.github.com/nginxlibrary/"/>
-  <updated>2013-10-17T14:57:44+00:00</updated>
-  <id>http://soumikgh.github.com/nginxlibrary/</id>
+  <link href="http://nginxlibrary.com/category/general/atom.xml" rel="self"/>
+  <link href="http://nginxlibrary.com/"/>
+  <updated>2013-10-17T15:15:13+00:00</updated>
+  <id>http://nginxlibrary.com/</id>
   <author>
     <name><![CDATA[Soumik Ghosh]]></name>
-    <email><![CDATA[contactSoumik@gmail.com]]></email>
+    <email><![CDATA[soumik@soumikghosh.com]]></email>
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
   
   <entry>
     <title type="html"><![CDATA[Check Nginx version]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/check-nginx-version/"/>
+    <link href="http://nginxlibrary.com/check-nginx-version/"/>
     <updated>2011-07-24T07:14:21+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/check-nginx-version</id>
+    <id>http://nginxlibrary.com/check-nginx-version</id>
     <content type="html"><![CDATA[<p>We can retrieve the version of Nginx currently installed by calling the Nginx
 binary with some command-line parameters. We can use the <strong>-v</strong> parameter to
 display the Nginx version only, or use the <strong>-V</strong> parameter to display the
@@ -38,9 +38,9 @@ configure arguments: --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log
   
   <entry>
     <title type="html"><![CDATA[Welcome to Nginx Library]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/welcome-to-nginx-library/"/>
+    <link href="http://nginxlibrary.com/welcome-to-nginx-library/"/>
     <updated>2010-09-02T10:38:22+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/welcome-to-nginx-library</id>
+    <id>http://nginxlibrary.com/welcome-to-nginx-library</id>
     <content type="html"><![CDATA[<p>Welcome to Nginx Library, where over time, I'll be posting various guides and
 how-tos to use and optimize the powerful, but lightweight web server, Nginx.</p>
 ]]></content>

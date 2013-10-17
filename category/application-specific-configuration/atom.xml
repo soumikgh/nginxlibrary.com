@@ -2,22 +2,22 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Application-specific configuration | Nginx Library]]></title>
-  <link href="http://soumikgh.github.com/nginxlibrary/category/application-specific-configuration/atom.xml" rel="self"/>
-  <link href="http://soumikgh.github.com/nginxlibrary/"/>
-  <updated>2013-10-17T14:57:44+00:00</updated>
-  <id>http://soumikgh.github.com/nginxlibrary/</id>
+  <link href="http://nginxlibrary.com/category/application-specific-configuration/atom.xml" rel="self"/>
+  <link href="http://nginxlibrary.com/"/>
+  <updated>2013-10-17T15:15:13+00:00</updated>
+  <id>http://nginxlibrary.com/</id>
   <author>
     <name><![CDATA[Soumik Ghosh]]></name>
-    <email><![CDATA[contactSoumik@gmail.com]]></email>
+    <email><![CDATA[soumik@soumikghosh.com]]></email>
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
   
   <entry>
     <title type="html"><![CDATA[Nginx configuration for XenForo]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/xenforo-configuration/"/>
+    <link href="http://nginxlibrary.com/xenforo-configuration/"/>
     <updated>2012-04-10T19:45:53+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/xenforo-configuration</id>
+    <id>http://nginxlibrary.com/xenforo-configuration</id>
     <content type="html"><![CDATA[<p>Writing a configuration file for XenForo is pretty simple and very similar to the <a href="http://nginxlibrary.com/wordpress-permalinks/">Wordpress configuration</a> where requests are internally redirected to the index.php file. With this configuration XenForo's friendly URLs work perfectly, as well as external access is cut off for some directories like <code>libraries</code>
  and <code>internal_data</code>.</p>
 
@@ -75,9 +75,9 @@
   
   <entry>
     <title type="html"><![CDATA[Nginx configuration for phpBB]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/phpbb-configuration/"/>
+    <link href="http://nginxlibrary.com/phpbb-configuration/"/>
     <updated>2012-04-08T20:02:53+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/phpbb-configuration</id>
+    <id>http://nginxlibrary.com/phpbb-configuration</id>
     <content type="html"><![CDATA[<p>I had previously <a href="http://nginxlibrary.com/converting-phpbbs-default-htaccess-for-nginx/">written an article</a> about converting phpBB's default htaccess rules to Nginx. Here I'll share a full-blown Nginx configuration file for serving a phpBB forum.</p>
 
 <p>This configuration file :</p>
@@ -125,9 +125,9 @@ server {
   
   <entry>
     <title type="html"><![CDATA[Converting phpBB's default .htaccess for nginx]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/converting-phpbbs-default-htaccess-for-nginx/"/>
+    <link href="http://nginxlibrary.com/converting-phpbbs-default-htaccess-for-nginx/"/>
     <updated>2011-05-11T11:50:53+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/converting-phpbbs-default-htaccess-for-nginx</id>
+    <id>http://nginxlibrary.com/converting-phpbbs-default-htaccess-for-nginx</id>
     <content type="html"><![CDATA[<p>phpBB ships with a small .htaccess file in the root that has rules to
 deny access to the config.php and common.php files in the absence of a PHP
 interpreter. I'll duplicate those rules for an Nginx configuration.</p>
@@ -156,9 +156,9 @@ document root, regardless of where they are located.</p>
   
   <entry>
     <title type="html"><![CDATA[Wordpress permalinks]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/wordpress-permalinks/"/>
+    <link href="http://nginxlibrary.com/wordpress-permalinks/"/>
     <updated>2010-09-05T14:23:59+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/wordpress-permalinks</id>
+    <id>http://nginxlibrary.com/wordpress-permalinks</id>
     <content type="html"><![CDATA[<p>Wordpress generally works out-of-the box on nginx. The
 posts load fine, the functions in the dashboard work pretty well, until you
 come to the permalinks. If you are on Apache, with mod_rewrite, Wordpress will

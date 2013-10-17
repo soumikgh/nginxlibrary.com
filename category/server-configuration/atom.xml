@@ -2,22 +2,22 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Server Configuration | Nginx Library]]></title>
-  <link href="http://soumikgh.github.com/nginxlibrary/category/server-configuration/atom.xml" rel="self"/>
-  <link href="http://soumikgh.github.com/nginxlibrary/"/>
-  <updated>2013-10-17T14:57:44+00:00</updated>
-  <id>http://soumikgh.github.com/nginxlibrary/</id>
+  <link href="http://nginxlibrary.com/category/server-configuration/atom.xml" rel="self"/>
+  <link href="http://nginxlibrary.com/"/>
+  <updated>2013-10-17T15:15:13+00:00</updated>
+  <id>http://nginxlibrary.com/</id>
   <author>
     <name><![CDATA[Soumik Ghosh]]></name>
-    <email><![CDATA[contactSoumik@gmail.com]]></email>
+    <email><![CDATA[soumik@soumikghosh.com]]></email>
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
   
   <entry>
     <title type="html"><![CDATA[Setting up PHP FastCGI]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/php-fastcgi/"/>
+    <link href="http://nginxlibrary.com/php-fastcgi/"/>
     <updated>2011-07-07T04:20:54+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/php-fastcgi</id>
+    <id>http://nginxlibrary.com/php-fastcgi</id>
     <content type="html"><![CDATA[<p>In a previous post, we had written about setting up Perl-FastCGI on Nginx.
 This article is about setting up PHP-FastCGI. As always, this article assumes
 that you are running on Debian Squeeze (or above) and uses aptitude/apt-get
@@ -150,9 +150,9 @@ child process will serve before being terminated and respawned.</p>
   
   <entry>
     <title type="html"><![CDATA[Installing the latest version of Nginx on Debian]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/debian-latest-nginx/"/>
+    <link href="http://nginxlibrary.com/debian-latest-nginx/"/>
     <updated>2011-06-05T04:32:39+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/debian-latest-nginx</id>
+    <id>http://nginxlibrary.com/debian-latest-nginx</id>
     <content type="html"><![CDATA[<p>The Nginx package in the Debian stable repositories can be quite outdated. It
 is often several version behind the latest, whereas the Nginx package from the
 testing/unstable repositories is updated frequently with newer versions of
@@ -220,9 +220,9 @@ this.</p>
   
   <entry>
     <title type="html"><![CDATA[Running CGI scripts using thttpd]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/running-cgi-scripts-using-thttpd/"/>
+    <link href="http://nginxlibrary.com/running-cgi-scripts-using-thttpd/"/>
     <updated>2011-04-22T05:42:23+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/running-cgi-scripts-using-thttpd</id>
+    <id>http://nginxlibrary.com/running-cgi-scripts-using-thttpd</id>
     <content type="html"><![CDATA[<p>Nginx cannot run CGI scripts natively. You have to either use the <a href="http://www.nginxlibrary.com/perl-fastcgi/" title="Setting up Perl FastCGI with Nginx">Perl-FastCGI daemon</a> to run your Perl scripts, or for a more "native" CGI
 environment, proxy the CGI scripts to a web-server that has the ability to
 execute them natively. Apache, surely, will be overkill for this purpose.
@@ -303,9 +303,9 @@ running on port 8000.</p>
   
   <entry>
     <title type="html"><![CDATA[Installing the latest version of Nginx on Ubuntu]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/ubuntu-latest-nginx/"/>
+    <link href="http://nginxlibrary.com/ubuntu-latest-nginx/"/>
     <updated>2011-04-11T14:57:49+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/ubuntu-latest-nginx</id>
+    <id>http://nginxlibrary.com/ubuntu-latest-nginx</id>
     <content type="html"><![CDATA[<p>The Nginx release on the Ubuntu repositories is often outdated. Igor pushes
 out new versions of Nginx quite frequently and it's understandable that the
 Ubuntu package maintainers do not keep up. Also, Ubuntu only includes major
@@ -343,9 +343,9 @@ automatically pull down and install updates for Nginx if they are available.</p>
   
   <entry>
     <title type="html"><![CDATA[Setting up Perl FastCGI with Nginx]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/perl-fastcgi/"/>
+    <link href="http://nginxlibrary.com/perl-fastcgi/"/>
     <updated>2011-02-23T05:09:18+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/perl-fastcgi</id>
+    <id>http://nginxlibrary.com/perl-fastcgi</id>
     <content type="html"><![CDATA[<p>This article assumes that you are running on Debian Lenny (or above) and uses
 aptitude/apt-get for fetching and installing packages.</p>
 

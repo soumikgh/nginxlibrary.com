@@ -2,22 +2,22 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Nginx Library]]></title>
-  <link href="http://soumikgh.github.com/nginxlibrary/atom.xml" rel="self"/>
-  <link href="http://soumikgh.github.com/nginxlibrary/"/>
-  <updated>2013-10-17T14:57:44+00:00</updated>
-  <id>http://soumikgh.github.com/nginxlibrary/</id>
+  <link href="http://nginxlibrary.com/atom.xml" rel="self"/>
+  <link href="http://nginxlibrary.com/"/>
+  <updated>2013-10-17T15:15:13+00:00</updated>
+  <id>http://nginxlibrary.com/</id>
   <author>
     <name><![CDATA[Soumik Ghosh]]></name>
-    <email><![CDATA[contactSoumik@gmail.com]]></email>
+    <email><![CDATA[soumik@soumikghosh.com]]></email>
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
   
   <entry>
     <title type="html"><![CDATA[Nginx configuration for XenForo]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/xenforo-configuration/"/>
+    <link href="http://nginxlibrary.com/xenforo-configuration/"/>
     <updated>2012-04-10T19:45:53+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/xenforo-configuration</id>
+    <id>http://nginxlibrary.com/xenforo-configuration</id>
     <content type="html"><![CDATA[<p>Writing a configuration file for XenForo is pretty simple and very similar to the <a href="http://nginxlibrary.com/wordpress-permalinks/">Wordpress configuration</a> where requests are internally redirected to the index.php file. With this configuration XenForo&#8217;s friendly URLs work perfectly, as well as external access is cut off for some directories like <code>libraries</code>
  and <code>internal_data</code>.</p>
 
@@ -75,9 +75,9 @@
   
   <entry>
     <title type="html"><![CDATA[Nginx configuration for phpBB]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/phpbb-configuration/"/>
+    <link href="http://nginxlibrary.com/phpbb-configuration/"/>
     <updated>2012-04-08T20:02:53+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/phpbb-configuration</id>
+    <id>http://nginxlibrary.com/phpbb-configuration</id>
     <content type="html"><![CDATA[<p>I had previously <a href="http://nginxlibrary.com/converting-phpbbs-default-htaccess-for-nginx/">written an article</a> about converting phpBB&#8217;s default htaccess rules to Nginx. Here I&#8217;ll share a full-blown Nginx configuration file for serving a phpBB forum.</p>
 
 <p>This configuration file :</p>
@@ -125,9 +125,9 @@ server {
   
   <entry>
     <title type="html"><![CDATA[Resolving "403 Forbidden" error]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/403-forbidden-error/"/>
+    <link href="http://nginxlibrary.com/403-forbidden-error/"/>
     <updated>2012-01-09T15:29:45+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/403-forbidden-error</id>
+    <id>http://nginxlibrary.com/403-forbidden-error</id>
     <content type="html"><![CDATA[<p>403 Forbidden errors are Nginx&#8217;s way of telling &#8220;You have requested for a resource but we cannot give it to you.&#8221; 403 Forbidden is technically not an error but a HTTP status code. 403 response headers are intentionally returned in many cases such as -</p>
 
 <ul>
@@ -177,9 +177,9 @@ drwxr-xr-x clara    clara    example.com
   
   <entry>
     <title type="html"><![CDATA[Using CloudFlare for country blocking]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/using-cloudflare-for-country-blocking/"/>
+    <link href="http://nginxlibrary.com/using-cloudflare-for-country-blocking/"/>
     <updated>2011-12-29T06:10:59+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/using-cloudflare-for-country-blocking</id>
+    <id>http://nginxlibrary.com/using-cloudflare-for-country-blocking</id>
     <content type="html"><![CDATA[<p><img class="right" src="http://nginxlibrary.com/images/post-images/2011/cloudflare-logo.png" width="244" height="40"></p>
 
 <p><a href="https://www.cloudflare.com/" title="CloudFlare">CloudFlare</a> is an innovative service, providing
@@ -248,9 +248,9 @@ error page can also be defined to make the error page more helpful.</p>
   
   <entry>
     <title type="html"><![CDATA[Nginx 1.0.11 has been released]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/nginx-1-0-11-has-been-released/"/>
+    <link href="http://nginxlibrary.com/nginx-1-0-11-has-been-released/"/>
     <updated>2011-12-16T03:08:30+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/nginx-1-0-11-has-been-released</id>
+    <id>http://nginxlibrary.com/nginx-1-0-11-has-been-released</id>
     <content type="html"><![CDATA[<p>Nginx 1.0.11 has been released.</p>
 
 <p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
@@ -277,9 +277,9 @@ error page can also be defined to make the error page more helpful.</p>
   
   <entry>
     <title type="html"><![CDATA[Nginx 1.0.10 has been released]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/nginx-1-0-10-has-been-released/"/>
+    <link href="http://nginxlibrary.com/nginx-1-0-10-has-been-released/"/>
     <updated>2011-11-15T07:11:03+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/nginx-1-0-10-has-been-released</id>
+    <id>http://nginxlibrary.com/nginx-1-0-10-has-been-released</id>
     <content type="html"><![CDATA[<p>Nginx 1.0.10 has been released.</p>
 
 <p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
@@ -297,9 +297,9 @@ error page can also be defined to make the error page more helpful.</p>
   
   <entry>
     <title type="html"><![CDATA[Nginx 1.0.9 has been released]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/nginx-1-0-9-has-been-released/"/>
+    <link href="http://nginxlibrary.com/nginx-1-0-9-has-been-released/"/>
     <updated>2011-11-01T13:06:46+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/nginx-1-0-9-has-been-released</id>
+    <id>http://nginxlibrary.com/nginx-1-0-9-has-been-released</id>
     <content type="html"><![CDATA[<p>Nginx 1.0.9 has been released.</p>
 
 <p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
@@ -332,9 +332,9 @@ error page can also be defined to make the error page more helpful.</p>
   
   <entry>
     <title type="html"><![CDATA[Nginx 1.0.8 has been released]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/nginx-1-0-8-has-been-released/"/>
+    <link href="http://nginxlibrary.com/nginx-1-0-8-has-been-released/"/>
     <updated>2011-10-01T11:03:51+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/nginx-1-0-8-has-been-released</id>
+    <id>http://nginxlibrary.com/nginx-1-0-8-has-been-released</id>
     <content type="html"><![CDATA[<p>Nginx 1.0.8 has been released.</p>
 
 <p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
@@ -350,9 +350,9 @@ error page can also be defined to make the error page more helpful.</p>
   
   <entry>
     <title type="html"><![CDATA[Nginx 1.0.7 has been released]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/nginx-1-0-7-has-been-released/"/>
+    <link href="http://nginxlibrary.com/nginx-1-0-7-has-been-released/"/>
     <updated>2011-09-30T14:59:02+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/nginx-1-0-7-has-been-released</id>
+    <id>http://nginxlibrary.com/nginx-1-0-7-has-been-released</id>
     <content type="html"><![CDATA[<p>Nginx 1.0.7 has been released.</p>
 
 <p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
@@ -385,9 +385,9 @@ error page can also be defined to make the error page more helpful.</p>
   
   <entry>
     <title type="html"><![CDATA[Nginx 1.0.6 has been released]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/nginx-1-0-6-has-been-released/"/>
+    <link href="http://nginxlibrary.com/nginx-1-0-6-has-been-released/"/>
     <updated>2011-08-30T10:55:51+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/nginx-1-0-6-has-been-released</id>
+    <id>http://nginxlibrary.com/nginx-1-0-6-has-been-released</id>
     <content type="html"><![CDATA[<p>Nginx 1.0.6 has been released.</p>
 
 <p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
@@ -416,9 +416,9 @@ error page can also be defined to make the error page more helpful.</p>
   
   <entry>
     <title type="html"><![CDATA[Hotlink protection in Nginx]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/hotlink-protection/"/>
+    <link href="http://nginxlibrary.com/hotlink-protection/"/>
     <updated>2011-08-19T02:30:57+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/hotlink-protection</id>
+    <id>http://nginxlibrary.com/hotlink-protection</id>
     <content type="html"><![CDATA[<p>Hotlinked files can be a major cause for bandwidth leeching for some sites.
 Here&#8217;s how you can hotlink protect your images and other file types using a
 simple location directive in your Nginx configuration file :</p>
@@ -461,9 +461,9 @@ directory. Like this :</p>
   
   <entry>
     <title type="html"><![CDATA[Hide Nginx version]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/hide-nginx-version/"/>
+    <link href="http://nginxlibrary.com/hide-nginx-version/"/>
     <updated>2011-07-30T01:58:11+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/hide-nginx-version</id>
+    <id>http://nginxlibrary.com/hide-nginx-version</id>
     <content type="html"><![CDATA[<p>If you are using an old version of Nginx or if you want to explicitly hide the Nginx version in your HTTP headers and your default error pages, you can use the <code>server_tokens</code> directive in your Nginx configuration. The server_tokens directive can be used either in the http, server or location block.</p>
 
 <p>Just set <code>server_tokens</code> to <code>off</code> (it is set to <code>on</code> by default) to hide your Nginx version in all externally visible places.</p>
@@ -477,9 +477,9 @@ directory. Like this :</p>
   
   <entry>
     <title type="html"><![CDATA[Check Nginx version]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/check-nginx-version/"/>
+    <link href="http://nginxlibrary.com/check-nginx-version/"/>
     <updated>2011-07-24T07:14:21+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/check-nginx-version</id>
+    <id>http://nginxlibrary.com/check-nginx-version</id>
     <content type="html"><![CDATA[<p>We can retrieve the version of Nginx currently installed by calling the Nginx
 binary with some command-line parameters. We can use the <strong>-v</strong> parameter to
 display the Nginx version only, or use the <strong>-V</strong> parameter to display the
@@ -500,9 +500,9 @@ configure arguments: --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log
   
   <entry>
     <title type="html"><![CDATA[Nginx 1.0.5 has been released]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/nginx-1-0-5-has-been-released/"/>
+    <link href="http://nginxlibrary.com/nginx-1-0-5-has-been-released/"/>
     <updated>2011-07-19T06:42:10+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/nginx-1-0-5-has-been-released</id>
+    <id>http://nginxlibrary.com/nginx-1-0-5-has-been-released</id>
     <content type="html"><![CDATA[<p>Nginx 1.0.5 has been released.</p>
 
 <p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
@@ -523,9 +523,9 @@ configure arguments: --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log
   
   <entry>
     <title type="html"><![CDATA[Setting up PHP FastCGI]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/php-fastcgi/"/>
+    <link href="http://nginxlibrary.com/php-fastcgi/"/>
     <updated>2011-07-07T04:20:54+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/php-fastcgi</id>
+    <id>http://nginxlibrary.com/php-fastcgi</id>
     <content type="html"><![CDATA[<p>In a previous post, we had written about setting up Perl-FastCGI on Nginx.
 This article is about setting up PHP-FastCGI. As always, this article assumes
 that you are running on Debian Squeeze (or above) and uses aptitude/apt-get
@@ -658,9 +658,9 @@ child process will serve before being terminated and respawned.</p>
   
   <entry>
     <title type="html"><![CDATA[Installing the latest version of Nginx on Debian]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/debian-latest-nginx/"/>
+    <link href="http://nginxlibrary.com/debian-latest-nginx/"/>
     <updated>2011-06-05T04:32:39+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/debian-latest-nginx</id>
+    <id>http://nginxlibrary.com/debian-latest-nginx</id>
     <content type="html"><![CDATA[<p>The Nginx package in the Debian stable repositories can be quite outdated. It
 is often several version behind the latest, whereas the Nginx package from the
 testing/unstable repositories is updated frequently with newer versions of
@@ -728,9 +728,9 @@ this.</p>
   
   <entry>
     <title type="html"><![CDATA[Nginx 1.0.4 has been released]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/nginx-1-0-4-has-been-released/"/>
+    <link href="http://nginxlibrary.com/nginx-1-0-4-has-been-released/"/>
     <updated>2011-06-01T06:40:52+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/nginx-1-0-4-has-been-released</id>
+    <id>http://nginxlibrary.com/nginx-1-0-4-has-been-released</id>
     <content type="html"><![CDATA[<p>Nginx 1.0.4 has been released.</p>
 
 <p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
@@ -749,9 +749,9 @@ this.</p>
   
   <entry>
     <title type="html"><![CDATA[Nginx 1.0.3 has been released]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/nginx-1-0-3-has-been-released/"/>
+    <link href="http://nginxlibrary.com/nginx-1-0-3-has-been-released/"/>
     <updated>2011-05-25T06:42:04+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/nginx-1-0-3-has-been-released</id>
+    <id>http://nginxlibrary.com/nginx-1-0-3-has-been-released</id>
     <content type="html"><![CDATA[<p>Nginx 1.0.3 has been released.</p>
 
 <p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>
@@ -771,9 +771,9 @@ this.</p>
   
   <entry>
     <title type="html"><![CDATA[Converting phpBB's default .htaccess for nginx]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/converting-phpbbs-default-htaccess-for-nginx/"/>
+    <link href="http://nginxlibrary.com/converting-phpbbs-default-htaccess-for-nginx/"/>
     <updated>2011-05-11T11:50:53+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/converting-phpbbs-default-htaccess-for-nginx</id>
+    <id>http://nginxlibrary.com/converting-phpbbs-default-htaccess-for-nginx</id>
     <content type="html"><![CDATA[<p>phpBB ships with a small .htaccess file in the root that has rules to
 deny access to the config.php and common.php files in the absence of a PHP
 interpreter. I&#8217;ll duplicate those rules for an Nginx configuration.</p>
@@ -802,9 +802,9 @@ document root, regardless of where they are located.</p>
   
   <entry>
     <title type="html"><![CDATA[Nginx 1.0.2 has been released]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/nginx-1-0-2-has-been-released/"/>
+    <link href="http://nginxlibrary.com/nginx-1-0-2-has-been-released/"/>
     <updated>2011-05-11T00:57:13+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/nginx-1-0-2-has-been-released</id>
+    <id>http://nginxlibrary.com/nginx-1-0-2-has-been-released</id>
     <content type="html"><![CDATA[<p>Nginx 1.0.2 has been released.</p>
 
 <p>Download it : <a href="http://nginx.org/en/download.html" title="Download Nginx">http://nginx.org/en/download.html</a></p>

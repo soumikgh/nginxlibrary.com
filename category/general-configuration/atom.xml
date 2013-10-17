@@ -2,22 +2,22 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: General Configuration | Nginx Library]]></title>
-  <link href="http://soumikgh.github.com/nginxlibrary/category/general-configuration/atom.xml" rel="self"/>
-  <link href="http://soumikgh.github.com/nginxlibrary/"/>
-  <updated>2013-10-17T14:57:44+00:00</updated>
-  <id>http://soumikgh.github.com/nginxlibrary/</id>
+  <link href="http://nginxlibrary.com/category/general-configuration/atom.xml" rel="self"/>
+  <link href="http://nginxlibrary.com/"/>
+  <updated>2013-10-17T15:15:13+00:00</updated>
+  <id>http://nginxlibrary.com/</id>
   <author>
     <name><![CDATA[Soumik Ghosh]]></name>
-    <email><![CDATA[contactSoumik@gmail.com]]></email>
+    <email><![CDATA[soumik@soumikghosh.com]]></email>
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
   
   <entry>
     <title type="html"><![CDATA[Resolving "403 Forbidden" error]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/403-forbidden-error/"/>
+    <link href="http://nginxlibrary.com/403-forbidden-error/"/>
     <updated>2012-01-09T15:29:45+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/403-forbidden-error</id>
+    <id>http://nginxlibrary.com/403-forbidden-error</id>
     <content type="html"><![CDATA[<p>403 Forbidden errors are Nginx's way of telling "You have requested for a resource but we cannot give it to you." 403 Forbidden is technically not an error but a HTTP status code. 403 response headers are intentionally returned in many cases such as -</p>
 
 <ul>
@@ -67,9 +67,9 @@ drwxr-xr-x clara    clara    example.com
   
   <entry>
     <title type="html"><![CDATA[Using CloudFlare for country blocking]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/using-cloudflare-for-country-blocking/"/>
+    <link href="http://nginxlibrary.com/using-cloudflare-for-country-blocking/"/>
     <updated>2011-12-29T06:10:59+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/using-cloudflare-for-country-blocking</id>
+    <id>http://nginxlibrary.com/using-cloudflare-for-country-blocking</id>
     <content type="html"><![CDATA[<p><img class="right" src="http://nginxlibrary.com/images/post-images/2011/cloudflare-logo.png" width="244" height="40"></p>
 
 <p><a href="https://www.cloudflare.com/" title="CloudFlare">CloudFlare</a> is an innovative service, providing
@@ -138,9 +138,9 @@ error page can also be defined to make the error page more helpful.</p>
   
   <entry>
     <title type="html"><![CDATA[Hotlink protection in Nginx]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/hotlink-protection/"/>
+    <link href="http://nginxlibrary.com/hotlink-protection/"/>
     <updated>2011-08-19T02:30:57+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/hotlink-protection</id>
+    <id>http://nginxlibrary.com/hotlink-protection</id>
     <content type="html"><![CDATA[<p>Hotlinked files can be a major cause for bandwidth leeching for some sites.
 Here's how you can hotlink protect your images and other file types using a
 simple location directive in your Nginx configuration file :</p>
@@ -183,9 +183,9 @@ directory. Like this :</p>
   
   <entry>
     <title type="html"><![CDATA[Hide Nginx version]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/hide-nginx-version/"/>
+    <link href="http://nginxlibrary.com/hide-nginx-version/"/>
     <updated>2011-07-30T01:58:11+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/hide-nginx-version</id>
+    <id>http://nginxlibrary.com/hide-nginx-version</id>
     <content type="html"><![CDATA[<p>If you are using an old version of Nginx or if you want to explicitly hide the Nginx version in your HTTP headers and your default error pages, you can use the <code>server_tokens</code> directive in your Nginx configuration. The server_tokens directive can be used either in the http, server or location block.</p>
 
 <p>Just set <code>server_tokens</code> to <code>off</code> (it is set to <code>on</code> by default) to hide your Nginx version in all externally visible places.</p>
@@ -199,9 +199,9 @@ directory. Like this :</p>
   
   <entry>
     <title type="html"><![CDATA[Converting phpBB's default .htaccess for nginx]]></title>
-    <link href="http://soumikgh.github.com/nginxlibrary/converting-phpbbs-default-htaccess-for-nginx/"/>
+    <link href="http://nginxlibrary.com/converting-phpbbs-default-htaccess-for-nginx/"/>
     <updated>2011-05-11T11:50:53+00:00</updated>
-    <id>http://soumikgh.github.com/nginxlibrary/converting-phpbbs-default-htaccess-for-nginx</id>
+    <id>http://nginxlibrary.com/converting-phpbbs-default-htaccess-for-nginx</id>
     <content type="html"><![CDATA[<p>phpBB ships with a small .htaccess file in the root that has rules to
 deny access to the config.php and common.php files in the absence of a PHP
 interpreter. I'll duplicate those rules for an Nginx configuration.</p>
