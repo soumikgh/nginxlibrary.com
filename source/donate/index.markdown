@@ -15,7 +15,7 @@ Donations encourage me to write more articles and reaffirms my belief in the fac
 Donations are accepted via Bitcoin, Flattr, PayPal or Moneybookers/Skrill.
 
 
-Bitcoin address: `1BPgAaKodnSDDEJVjujBK3KEhzsVHNc92c`
+Bitcoin address: `1CXUFLZcgJBx9nAQeGNNCPXpC8EMWN6ekj`
 
 
 Donate via Flattr:
